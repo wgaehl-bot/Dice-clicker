@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice clicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: white;
+        }
+
+        #dice {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            background: white;
+            color: black;
+            font-size: 40px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 15px;
+            user-select: none;
+        }
+
+        /* DICE ANIMATION SPEED not speed just how fast it spins */
+        .spinning {
+            animation: spin 0.4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .box {
+            margin: 15px;
+        }
+    </style>
+</head>
+<body>
+<div id="game">
+    <div id="leftColumn">
+        <div class="box">
+            <button onclick="buyAuto()">
+                Auto roller <div>+ 0.06 - 0.12 per second <div>(Cost: <span id="autoCost">15</span>)</div><div>Owned: <span id="autoCount">0</span></div></div>
+            </button>
+        </div>
+    </div>
+
+    <div id="centerColumn">
+        <h1>🎲 Dice Clicker</h1>
+        <h2>Dice: <span id="score">0</span></h2>
+
+        <div id="dice">?</div>
+        <div id="min-maxmanual">1 - 6 per roll</div>
+        <div><span id="autoRate">0.00 - 0.00</span> / sec</div>
+        <div><span id="totalrolls">0</span> Rolls</div>
+        </div>
+
+
+    <div id="rightColumn">
+    <h3>Upgrades</h3>
+    <div id="upgradeGrid">
+        <div class="upgradeBox" id="rollception" data-cost="250" hidden>
+            <button onclick="buyrollception()" onmouseover="showTooltip(event, 'Rollception', 'Gain x1.001 dice per roll from manual rolling', 'Cost: 250')" onmouseout="hideTooltip()">🔄</button>
+        </div>
+
+        <div class="upgradeBox" id="autoluck" data-cost="100" hidden>
+            <button onclick="buyautoluck()" onmouseover="showTooltip(event, 'Auto luck', 'x2 more from autorollers', 'Cost: 100')" onmouseout="hideTooltip()">☘️</button>
+        </div>
+
+        <div class="upgradeBox" id="fasterrollers" data-cost="500" hidden>
+            <button onclick="buyfasterrollers()" onmouseover="showTooltip(event, 'Faster rollers', 'x2 more from autorollers', 'Cost: 500')" onmouseout="hideTooltip()">⚡</button>
+        </div>
+
+        <div class="upgradeBox" id="d4" data-cost="1000" hidden>
+            <button onclick="buyd4()" onmouseover="showTooltip(event, 'D4', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d6" data-cost="1000" hidden>
+            <button onclick="buyd6()" onmouseover="showTooltip(event, 'D6', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d8" data-cost="1000" hidden>
+            <button onclick="buyd8()" onmouseover="showTooltip(event, 'D8', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d10" data-cost="1000" hidden>
+            <button onclick="buyd10()" onmouseover="showTooltip(event, 'D10', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d12" data-cost="1000" hidden>
+            <button onclick="buyd12()" onmouseover="showTooltip(event, 'D12', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d20" data-cost="1000" hidden>
+            <button onclick="buyd20()" onmouseover="showTooltip(event, 'D20', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="bautoluck" data-cost="10000" hidden>
+            <button onclick="buybautoluck()" onmouseover="showTooltip(event, 'Better auto luck', 'Increase lowest amount from autorollers by +0.02 at base', 'Cost: 10k')" onmouseout="hideTooltip()">🍀</button>
+        </div>
+
+        <div class="upgradeBox" id="combo" data-cost="100000" hidden>
+            <button onclick="buycombo()" onmouseover="showTooltip(event, 'Combo', 'Increase rolling amount by x1.1 per roll but goes down by x1.05 every second', 'Cost: 100k')" onmouseout="hideTooltip()">💥</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="box achievement" id="ach100rolls" hidden>
+    <button onclick="hideach100rolls()">
+        100 Rolls! <div>Roll dice manually 100 times<div>Unlocked Rollception upgrade</div>Click to hide</div>
+    </button>
+</div>
+
+<div class="box achievement" id="ach1000rolls" hidden>
+    <button onclick="hideach1000rolls()">
+        1000 Rolls! <div>Roll dice manually 1000 times<div></div>Click to hide</div>
+    </button>
+</div>
+
+<div class="box multipliers" id="allthemultipliers">
+    <button onclick="lowerdevmodeclick()">
+        Multipliers for All: <div><span id="dicetypesmultiplier">1</span></div><div> </div>Multipliers for manual rolls: <div><span id="rollceptiongain">1</span><div><span id="combogain"></span></div>Total roll mutliplier: <div><span id="totalrollmultiplier">1</span></div><div>Multipliers for Autorollers: <div><span id="autorollmultiplier">1</span></div>Total Autoroller multiplier: <div><span id="totalautomultiplier">1</span></div></div></div>
+    </button>
+
+<div class="box devmode" id="devmodeget5autorollers" hidden>
+    <button onclick="devmodeget5autorollers()">
+        5 Autorollers<div>Get five autorollers for free!</div>
+    </button>
+</div>
+<div id="diamondDice" hidden>💎🎲</div>
+<div id="tooltip"></div>
+<style>
+.achievement {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: gold;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+.multipliers {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    top: 10px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.devmode {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 10px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+/* background flash */
+.critFlash {
+    animation: critFade 0.4s ease-out;
+}
+
+@keyframes critFade {
+    0% {
+        background-color: red;
+    }
+    100% {
+        background-color: #222;
+    }
+}
+
+/* screen shake */
+.shake {
+    animation: shake 0.4s;
+}
+
+.bigshake {
+    animation: bigshake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, -5px); }
+    75% { transform: translate(-5px, -5px); }
+    100% { transform: translate(0px, 0px); }
+}
+
+@keyframes bigshake {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(-20px, 20px); }
+    50% { transform: translate(20px, -20px); }
+    75% { transform: translate(-20px, -20px); }
+    100% { transform: translate(0px, 0px); }
+}
+
+.superCritFlash {
+    animation: superCritFade 0.4s ease-out;
+}
+
+@keyframes superCritFade {
+    0% { background-color: purple; }
+    100% { background-color: #222; }
+}
+
+.floating-number {
+    position: absolute;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    opacity: 1;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    color: black;
+    font-size: 30px;
+    text-shadow: 0 0 5px white;
+}
+
+.floating-number.crit {
+    color: red;
+    font-size: 45px;
+    text-shadow: 0 0 5px white;
+}
+
+.floating-number.supercrit {
+    color: purple;
+    font-size: 60px;
+    text-shadow: 0 0 10px gold;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-60px); opacity: 0; }
+}
+
+#diamondDice {
+    position: fixed;
+    font-size: 50px;
+    cursor: pointer;
+    z-index: 999;
+    animation: floatDiamond 2s infinite ease-in-out;
+}
+
+@keyframes floatDiamond {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+#game {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+#leftColumn, #rightColumn {
+    width: 310px;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+#centerColumn {
+    text-align: center;
+}
+
+#leftColumn .box,
+#rightColumn .box{
+    margin-bottom: 5px;
+}
+
+#leftColumn::-webkit-scrollbar,
+#rightColumn::-webkit-scrollbar {
+    width: 8px;
+}
+
+#leftColumn::-webkit-scrollbar-thumb,
+#rightColumn::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+#leftColumn::-webkit-scrollbar-thumb:hover,
+#rightColumn::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+#upgradeGrid{
+display:grid;
+grid-template-columns: repeat(3, 60px);
+gap:20px;
+justify-content:center;
+}
+
+.upgradeBox{
+width:50px;
+height:50px;
+background:#333;
+border:2px solid #666;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+cursor:pointer;
+transition:transform 0.1s;
+}
+
+.upgradeBox:hover{
+transform:scale(1.15);
+background:#444;
+}
+
+#tooltip{
+position:fixed;
+background:#111;
+color:white;
+padding:8px 12px;
+border-radius:6px;
+border:1px solid #555;
+font-size:14px;
+pointer-events:none;
+display:none;
+z-index:2000;
+max-width:200px;
+}
+
+.upgradeBox button{
+background:none;
+border:none;
+font-size:28px;
+cursor:pointer;
+color:white;
+}
+
+.upgradeBox{
+opacity:0;
+transition:opacity 0.3s;
+}
+
+.upgradeBox:not([hidden]){
+opacity:1;
+}
+
+.upgradeBox[hidden]{
+    display:none;
+}
+
+.upgradeBox{
+filter: grayscale(100%);
+opacity:0.5;
+transition:0.2s;
+}
+
+.upgradeBox.affordable{
+filter:none;
+opacity:1;
+box-shadow:0 0 8px gold;
+}
+</style>
+
+<script>
+let score = 0;
+let totaldice = 0;
+let autoCount = 0;
+let autoMin = 0.06;
+let autoMax = 0.12;
+let autoCost = 15;
+let spinning = false;
+let totalrolls = 0;
+let Rollceptiongain = 1;
+let RollceptionUnlocked = false;
+let manualrollmin = 1;
+let manualrollmax = 6;
+let autorollmultiplier = 1;
+let achievement100rolls = 0;
+let achievement100rollsshownbefore = 0;
+let achievement1000rolls = 0;
+let achievement1000rollsshownbefore = 0;
+let autoluckUnlocked = false;
+let fasterrollersUnlocked = false;
+let bautoluckUnlocked = false;
+let comboUnlocked = false;
+let firstdicesetcanget = false;
+let d4Unlocked = false;
+let d6Unlocked = false;
+let d8Unlocked = false;
+let d10Unlocked = false;
+let d12Unlocked = false;
+let d20Unlocked = false;
+let combo = 1;
+let critchance = 0.01;
+let supercritchance = 0.001;
+let critmultiplier = 4;
+let supercritmultiplier = 16;
+let currentcritmultiplier = 1;
+let critted = false;
+let supercritted = false;
+let clicksuntildevmode = 10;
+let devmode = false;
+let diamondDiceActive = false;
+let clickbuff = 0;
+let clickbuffamnt = 1;
+let dicetypesmultiplier = 1;
+
+
+const diamondDice = document.getElementById("diamondDice");
+const dice = document.getElementById("dice");
+updateDisplay();
+
+// DICE CLICK
+dice.onclick = function() {
+    if (spinning) return;
+
+    spinning = true;
+    dice.classList.add("spinning");
+    dice.textContent = "?";
+
+    // Force a reflow so animation starts properly
+    void dice.offsetWidth;
+
+    setTimeout(() => {
+        dice.classList.remove("spinning");
+
+        // Reset manual roll range
+        manualrollmin = 1;
+        manualrollmax = 6;
+
+        // Calculate roll
+        let roll;
+
+        if (comboUnlocked) {
+            combo += 0.1;
+        }
+
+        let rand = Math.random();
+
+        if (rand < supercritchance) {
+            currentcritmultiplier = supercritmultiplier;
+            critted = false;
+            supercritted = true;
+        } 
+            else if (rand < critchance) {
+                currentcritmultiplier = critmultiplier;
+                supercritted = false;
+                critted = true;
+            } 
+                else {
+                    currentcritmultiplier = 1;
+                    critted = false;
+                    supercritted = false;
+                }
+
+        if (RollceptionUnlocked) {
+            Rollceptiongain = totalrolls * 0.001 + 1;
+            roll = (Math.floor(Math.random() * 6) + 1) * Rollceptiongain;
+            manualrollmin *= Rollceptiongain * combo * clickbuffamnt * dicetypesmultiplier;
+            manualrollmax *= Rollceptiongain * combo * clickbuffamnt * dicetypesmultiplier;
+            } else {
+                roll = Math.floor(Math.random() * 6) + 1;
+                manualrollmin *= combo * clickbuffamnt * dicetypesmultiplier;
+                manualrollmax *= combo * clickbuffamnt * dicetypesmultiplier;
+            }
+        
+        roll = roll * combo * currentcritmultiplier * clickbuffamnt * dicetypesmultiplier;
+
+        roll = Math.round(roll * 100) / 100;
+        dice.textContent = roll;
+
+        score += roll;
+        totaldice += roll;
+        totalrolls += 1;
+
+        document.body.classList.remove("shake", "bigshake");
+
+        if (supercritted) {
+            showFloatingNumber(roll, critted, supercritted)
+            document.body.classList.add("bigshake");
+
+            setTimeout(() => {
+                document.body.classList.remove("bigshake");
+            }, 400);
+
+            } else if (critted) {
+                showFloatingNumber(roll, critted, supercritted)
+                document.body.classList.add("shake");
+
+                setTimeout(() => {
+                    document.body.classList.remove("shake");
+                }, 400);
+        } else {
+            showFloatingNumber(roll);
+        }
+
+        if (!achievement100rolls && totalrolls >= 100) {
+            achievement100rolls = 1;
+        }
+        if (!achievement1000rolls && totalrolls >= 1000) {
+            achievement1000rolls = 1;
+        }
+        spinning = false;
+        updateDisplay();
+    }, 800); // this 800ms is how long the animation runs
+};
+
+// Buy an auto dice generator
+function buyAuto() {
+    if (score >= autoCost) {
+        score -= autoCost;
+        autoCost = Math.floor(autoCost * 1.3);
+        autoCount++;
+        updateDisplay();
+    }
+}
+
+function buyrollception() {
+    if (score >= 250) {
+        score -= 250;
+        RollceptionUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buycombo() {
+    if (score >= 100000) {
+        score -= 100000;
+        comboUnlocked = true;
+        updateDisplay();
+    }
+}
+
+
+function buyautoluck() {
+    if (score >= 100) {
+        score -= 100;
+        autorollmultiplier *= 2;
+        autoluckUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyfasterrollers() {
+    if (score >= 500) {
+        score -= 500;
+        autorollmultiplier *= 2;
+        fasterrollersUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buybautoluck() {
+    if (score >= 10000) {
+        score -= 10000;
+        autoMin += 0.02;
+        bautoluckUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyd4() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d4Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd6() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d6Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd8() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d8Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd10() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d10Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd12() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d12Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd20() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d20Unlocked = true;
+        updateDisplay();
+    }
+}
+
+// DPS INCOME
+setInterval(function() {
+    if (autoCount > 0) {
+        let totalMin = autoMin * autoCount * autorollmultiplier * dicetypesmultiplier;
+        let totalMax = autoMax * autoCount * autorollmultiplier * dicetypesmultiplier;
+        let gain = Math.random() * (totalMax - totalMin) + totalMin;
+
+        score += gain;
+        totaldice += gain;
+        updateDisplay();
+    }
+}, 1000);
+
+setInterval(function() {
+    if (comboUnlocked && combo > 1) {
+        combo -= 0.05;
+        if (combo < 1) combo = 1; // clamp to 1 minimum
+        manualrollmin = 1
+        manualrollmax = 6
+        if (RollceptionUnlocked) {
+            Rollceptiongain = totalrolls * 0.001 + 1;
+            manualrollmin *= Rollceptiongain * combo;
+            manualrollmax *= Rollceptiongain * combo;
+        } else {
+            manualrollmin *= combo;
+            manualrollmax *= combo;
+        }
+        updateDisplay();          // update immediately so UI shows it dropping
+    }
+    if (clickbuff > 0) {
+        clickbuff -= 1
+    } else {
+        clickbuffamnt = 1
+    }
+}, 1000);
+
+function hideach100rolls() {
+    document.getElementById("ach100rolls").hidden = true;
+}
+
+function hideach1000rolls() {
+    document.getElementById("ach1000rolls").hidden = true;
+}
+
+function formatNumber(num) {
+
+    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+
+    if (num < 1000) return num.toFixed(2);
+
+    let tier = Math.floor(Math.log10(num) / 3);
+
+    // If within suffix list
+    if (tier < suffixes.length) {
+        let scale = Math.pow(10, tier * 3);
+        let scaled = num / scale;
+        return scaled.toFixed(2) + suffixes[tier];
+    }
+
+    // If number is insanely big → scientific notation
+    return num.toExponential(2);
+}
+
+function showFloatingNumber(value, isCrit, isSuperCrit) {
+    const number = document.createElement("div");
+    number.classList.add("floating-number");
+    
+    if (isSuperCrit) number.classList.add("supercrit");
+    else if (isCrit) number.classList.add("crit");
+    
+    number.textContent = value;
+
+    // Position near the dice
+    const diceRect = dice.getBoundingClientRect();
+    number.style.left = (diceRect.left + diceRect.width / 2) + "px";
+    number.style.top = diceRect.top + "px";
+
+    document.body.appendChild(number);
+
+    // Animate float up
+    requestAnimationFrame(() => {
+        number.style.transform = "translateY(-60px)";
+        number.style.opacity = 0;
+    });
+
+    // Remove after animation
+    setTimeout(() => number.remove(), 800);
+}
+
+function lowerdevmodeclick() {
+    clicksuntildevmode -= 1
+    if (clicksuntildevmode <= 0) {
+        devmode = true
+        alert("Test mode enabled!")
+        console.log("Test mode enabled!")
+        updateDisplay()
+    }
+}
+
+function devmodeget5autorollers() {
+    autoCount += 5
+    autoCost = Math.floor(autoCost * 3.71293);
+    updateDisplay()
+}
+
+setInterval(function() {
+
+    if (diamondDiceActive) return;
+
+    if (Math.random() < 0.05) { // 5% chance every 10 seconds
+        spawnDiamondDice();
+    }
+
+}, 10000);
+
+
+function spawnDiamondDice() {
+
+    diamondDiceActive = true;
+
+    let x = Math.random() * (window.innerWidth - 100);
+    let y = Math.random() * (window.innerHeight - 100);
+
+    diamondDice.style.left = x + "px";
+    diamondDice.style.top = y + "px";
+
+    diamondDice.hidden = false;
+
+    // disappear after 8 seconds
+    setTimeout(() => {
+        diamondDice.hidden = true;
+        diamondDiceActive = false;
+    }, 8000);
+
+}
+
+diamondDice.onclick = function() {
+
+    diamondDice.hidden = true;
+    diamondDiceActive = false;
+
+    let reward = Math.floor(Math.random() * 5);
+
+    if (reward === 0) {
+        score += (totaldice / 100) * 15;
+        alert("💎 Lucky! +" + Math.floor((totaldice / 100) * 15) + " Dice");
+    }
+
+    else if (reward === 1) {
+        autoCount += 1;
+        alert("💎 Free Autoroller!");
+        autocost = Math.floor(autoCost * 1.3);
+    }
+
+    else if (reward === 2) {
+        clickbuff += 60;
+        clickbuffamnt = 2;
+        alert("💎 Click buff! x2 for 60 seconds!");
+    }
+
+    else if (reward === 3) {
+        clickbuff += 5
+        clickbuffamnt += 777;
+        alert("💎Lottery win! x777 clicks for 5 seconds!")
+    }
+
+    else {
+        score *= 2;
+        alert("💎 Dice Doubled!");
+    }
+
+    updateDisplay();
+};
+
+function showTooltip(event, title, desc, cost){
+
+const tooltip = document.getElementById("tooltip");
+
+tooltip.style.display = "block";
+
+tooltip.innerHTML =
+"<b>" + title + "</b><br>" +
+desc + "<br>" +
+"<i>" + cost + "</i>";
+
+tooltip.style.left = event.clientX + 15 + "px";
+tooltip.style.top = event.clientY + 15 + "px";
+
+}
+
+function hideTooltip(){
+document.getElementById("tooltip").style.display = "none";
+}
+
+function updateUpgradeAffordability(){
+
+const upgrades = document.querySelectorAll(".upgradeBox");
+
+upgrades.forEach(upgrade => {
+
+let cost = Number(upgrade.dataset.cost);
+
+if(score >= cost){
+upgrade.classList.add("affordable");
+}else{
+upgrade.classList.remove("affordable");
+}
+
+});
+
+}
+
+function updateDisplay() {
+    document.getElementById("score").textContent = formatNumber(score);
+    document.getElementById("autoCount").textContent = autoCount;
+    document.getElementById("autoCost").textContent = formatNumber(autoCost);
+    document.getElementById("autorollmultiplier").textContent = ("x" + formatNumber(autorollmultiplier));
+    document.getElementById("rollceptiongain").textContent = ("x" + formatNumber(Rollceptiongain));
+    document.getElementById("totalrolls").textContent = formatNumber(totalrolls);
+    document.getElementById("dicetypesmultiplier").textContent = ("x" + formatNumber(dicetypesmultiplier));
+    document.getElementById("totalrollmultiplier").textContent = ("x" + formatNumber(currentcritmultiplier * combo * dicetypesmultiplier * Rollceptiongain));
+    document.getElementById("totalautomultiplier").textContent = ("x" + formatNumber(autorollmultiplier * dicetypesmultiplier));
+    document.addEventListener("mousemove", function(e){
+        const tooltip = document.getElementById("tooltip");
+        tooltip.style.left = e.clientX + 15 + "px";
+        tooltip.style.top = e.clientY + 15 + "px";
+    });
+    if (score >= 500) {
+        firstdicesetcanget = true;
+    }
+    if (comboUnlocked) {
+    document.getElementById("combogain").textContent = ("x" + formatNumber(combo));
+    }
+    document.title = formatNumber(score) + " Dice in Dice clicker";
+
+    let totalMin = (autoMin * autoCount) * autorollmultiplier;
+    let totalMax = (autoMax * autoCount) * autorollmultiplier;
+    document.getElementById("autoRate").textContent = totalMin + " - " + totalMax;
+    document.getElementById("min-maxmanual").textContent = formatNumber(manualrollmin) + " - " + formatNumber(manualrollmax) + " per roll";
+    if (achievement100rolls && !RollceptionUnlocked) {
+        document.getElementById("rollception").hidden = false;
+    } else {
+        document.getElementById("rollception").hidden = true;
+    }
+    if (autoCount >= 1 && !autoluckUnlocked) {
+        document.getElementById("autoluck").hidden = false;
+    } else {
+        document.getElementById("autoluck").hidden = true;
+    }
+    if (autoCount >= 1 && !fasterrollersUnlocked) {
+        document.getElementById("fasterrollers").hidden = false;
+    } else {
+        document.getElementById("fasterrollers").hidden = true;
+    }
+    if (autoCount >= 10 && !bautoluckUnlocked) {
+        document.getElementById("bautoluck").hidden = false;
+    } else {
+        document.getElementById("bautoluck").hidden = true;
+    }
+    if (firstdicesetcanget && !d4Unlocked) {
+        document.getElementById("d4").hidden = false;
+    } else {
+        document.getElementById("d4").hidden = true;
+    }
+    if (firstdicesetcanget && !d6Unlocked) {
+        document.getElementById("d6").hidden = false;
+    } else {
+        document.getElementById("d6").hidden = true;
+    }
+    if (firstdicesetcanget && !d8Unlocked) {
+        document.getElementById("d8").hidden = false;
+    } else {
+        document.getElementById("d8").hidden = true;
+    }
+    if (firstdicesetcanget && !d10Unlocked) {
+        document.getElementById("d10").hidden = false;
+    } else {
+        document.getElementById("d10").hidden = true;
+    }
+    if (firstdicesetcanget && !d12Unlocked) {
+        document.getElementById("d12").hidden = false;
+    } else {
+        document.getElementById("d12").hidden = true;
+    }
+    if (firstdicesetcanget && !d20Unlocked) {
+        document.getElementById("d20").hidden = false;
+    } else {
+        document.getElementById("d20").hidden = true;
+    }
+    if (achievement1000rolls && !comboUnlocked) {
+        document.getElementById("combo").hidden = false;
+    } else {
+        document.getElementById("combo").hidden = true;
+    }
+    if (achievement100rolls && !achievement100rollsshownbefore) {
+        document.getElementById("ach100rolls").hidden = false;
+        achievement100rollsshownbefore = 1;
+    }
+    if (achievement1000rolls && !achievement1000rollsshownbefore) {
+        document.getElementById("ach1000rolls").hidden = false;
+        achievement1000rollsshownbefore = 1;
+    }
+    if (devmode) {
+        document.getElementById("devmodeget5autorollers").hidden = false
+    }
+    updateUpgradeAffordability();
+    
+
+}
+// All autodice generator names: Auto roller, Dice goblin, Casino table, Dice factory, Dice mine, Dice laboratory, Dice portal, Dice dimension, Dice planet, Dice star, Dice galaxy, Dice multiverse, Dice gods, Dice singularity, The final dice.
+</script>
+
+</body>
+</html>
