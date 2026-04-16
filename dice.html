@@ -1,0 +1,2807 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dice clicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: white;
+        }
+
+        #dice {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            background: white;
+            color: black;
+            font-size: 40px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 15px;
+            user-select: none;
+        }
+
+        /* DICE ANIMATION SPEED not speed just how fast it spins */
+        .spinning {
+            animation: spin 0.4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .box {
+            margin: 15px;
+        }
+    </style>
+</head>
+<body>
+<div id="game">
+    <div id="leftColumn">
+        <div class="box">
+            <button onclick="buyAuto()">
+                Auto roller <div>+0.06 - 0.12 per second <div>(Cost: <span id="autoCost">15</span>)</div><div>Owned: <span id="autoCount">0</span></div></div>
+            </button>
+        </div>
+        <div class="box">
+            <button onclick="buyDiceGoblin()">
+                DiceGoblin <div>+0.8 - 1.6 per second <div>(Cost: <span id="dicegoblinCost">200</span>)</div><div>Owned: <span id="dicegoblinCount">0</span></div></div>
+            </button>
+        </div>
+        <div class="box">
+            <button onclick="buyCasinoTable()">
+                Casino Table <div>+10 - 20 per second <div>(Cost: <span id="casinotableCost">15000</span>)</div><div>Owned: <span id="casinotableCount">0</span></div></div>
+            </button>
+        </div>
+    </div>
+
+    <div id="centerColumn">
+        <h1>
+        Dice Clicker 
+        <button class="invisibleButton" onclick="clickit()">🎲</button>
+        </h1>
+        <h2>Dice: <span id="score">0</span></h2>
+
+        <div id="dice">?</div>
+        <div id="min-maxmanual">1 - 6 per roll</div>
+        <div><span id="autoRate">0.00 - 0.00</span> / sec</div>
+        <div><span id="totalrolls">0</span> Rolls</div>
+        <div></div>
+        <div id="saving" hidden>Saving...</div>
+        <div id="bottomArea">
+
+            <div id="timefluxUI">
+
+                <div id="achievementMenu">
+                    <div id="achievementGrid">
+
+                    <div class="achievement2 locked" id="ach1" onmouseover="showTooltip(event, '100 Rolls', 'Roll 100 times', 'Unlocks Rollception')" onmouseout="hideTooltip()">
+                        <img src="images/ach1.png"
+                            class="achievementIcon"
+                            onerror="this.replaceWith('🎲')">
+                    </div>
+
+                    <div class="achievement2 locked" id="ach2" onmouseover="showTooltip(event, '1000 Rolls', 'Roll 1000 times', 'Unlocks Combo')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach3" onmouseover="showTooltip(event, 'Click it', 'Click a secret', '')" onmouseout="hideTooltip()">
+                    👆
+                    </div>
+                    
+                    <div class="achievement2 locked" id="ach4" onmouseover="showTooltip(event, 'First time gambler', 'Have one dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach5" onmouseover="showTooltip(event, 'Gambling apprentice', 'Have 1k dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach6" onmouseover="showTooltip(event, 'Casinos enemy', 'Have 100k dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach7" onmouseover="showTooltip(event, 'Casinos rival', 'Have 1m dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach8" onmouseover="showTooltip(event, 'Average gambler', 'Have 1b dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach9" onmouseover="showTooltip(event, 'Above average gambler', 'Have 1t dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach10" onmouseover="showTooltip(event, 'Good gambler', 'Have 1qa dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach11" onmouseover="showTooltip(event, 'Dice lover', 'Have 1qi dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach12" onmouseover="showTooltip(event, 'Pro gambler', 'Have 1sx dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach13" onmouseover="showTooltip(event, 'Literally a casino', 'Have 1sp dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach14" onmouseover="showTooltip(event, 'The land of dice', 'Have 1oc dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach15" onmouseover="showTooltip(event, 'Can i borrow a dice?', 'Have 1no dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach16" onmouseover="showTooltip(event, 'THEYRE ALL MINE', 'Have 1dc dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach17" onmouseover="showTooltip(event, 'Mmmm cake... now back to rolling', 'Have 1e+36 dice', '')" onmouseout="hideTooltip()">
+                    🎲
+                    </div>
+
+                    <div class="achievement2 locked" id="ach18" onmouseover="showTooltip(event, 'Automatic dice?', 'Have 1 autoroller', 'Unlocks autoluck')" onmouseout="hideTooltip()">
+                    🏭
+                    </div>
+
+                    <div class="achievement2 locked" id="ach19" onmouseover="showTooltip(event, 'Quintuple rolling', 'Have 5 autorollers', 'Unlocks faster rollers')" onmouseout="hideTooltip()">
+                    🏭
+                    </div>
+
+                    <div class="achievement2 locked" id="ach20" onmouseover="showTooltip(event, 'Quite some rollers innit', 'Have 10 autorollers', 'Unlocks better auto luck')" onmouseout="hideTooltip()">
+                    🏭
+                    </div>
+
+                    <div class="achievement2 locked" id="ach21" onmouseover="showTooltip(event, 'Im gonna steal your gold! - says a young goblin', 'Have 1 dice goblin', 'Unlocks horde')" onmouseout="hideTooltip()">
+                    👺
+                    </div>
+
+                    <div class="achievement2 locked" id="ach22" onmouseover="showTooltip(event, 'Goblin village', 'Have 5 dice goblins', '')" onmouseout="hideTooltip()">
+                    👺
+                    </div>
+
+                    <div class="achievement2 locked" id="ach23" onmouseover="showTooltip(event, 'Goblin town', 'Have 10 dice goblins', '')" onmouseout="hideTooltip()">
+                    👺
+                    </div>
+
+                    <div class="achievement2 locked" id="ach24" onmouseover="showTooltip(event, 'Very tiny casino', 'Have 1 casino table', '')" onmouseout="hideTooltip()">
+                    🎰
+                    </div>
+
+                    <div class="achievement2 locked" id="ach25" onmouseover="showTooltip(event, 'Tiny casino', 'Have 5 casino tables', '')" onmouseout="hideTooltip()">
+                    🎰
+                    </div>
+
+                    <div class="achievement2 locked" id="ach26" onmouseover="showTooltip(event, 'Small casino', 'Have 10 casino tables', '')" onmouseout="hideTooltip()">
+                    🎰
+                    </div>
+
+                    <div class="achievement2 locked" id="ach27" onmouseover="showTooltip(event, 'Prestiging... cool', 'Prestige once', '')" onmouseout="hideTooltip()">
+                    🌌
+                    </div>
+
+                    <div class="achievement2 locked" id="ach28" onmouseover="showTooltip(event, 'Prestige apprentice', 'Prestige 10 times', 'Unlock auto prestige')" onmouseout="hideTooltip()">
+                    🌌
+                    </div>
+
+                </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="rightColumn">
+    <h3>Upgrades</h3>
+    <div id="upgradeGrid">
+        <div class="upgradeBox" id="rollception" data-cost="250" hidden>
+            <button onclick="buyrollception()" onmouseover="showTooltip(event, 'Rollception', 'Gain x1.001 dice per roll from manual rolling', 'Cost: 250')" onmouseout="hideTooltip()">🔄</button>
+        </div>
+
+        <div class="upgradeBox" id="autoluck" data-cost="100" hidden>
+            <button onclick="buyautoluck()" onmouseover="showTooltip(event, 'Auto luck', 'x2 more from autorollers', 'Cost: 100')" onmouseout="hideTooltip()">☘️</button>
+        </div>
+
+        <div class="upgradeBox" id="fasterrollers" data-cost="500" hidden>
+            <button onclick="buyfasterrollers()" onmouseover="showTooltip(event, 'Faster rollers', 'x2 more from autorollers', 'Cost: 500')" onmouseout="hideTooltip()">⚡</button>
+        </div>
+
+        <div class="upgradeBox" id="d4" data-cost="1000" hidden>
+            <button onclick="buyd4()" onmouseover='showTooltip(event, "D4", "Gain 1% more dice accumulatively", "Cost: 1k")' onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d6" data-cost="1000" hidden>
+            <button onclick="buyd6()" onmouseover='showTooltip(event, "D6", "Gain 1% more dice accumulatively", "Cost: 1k")' onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d8" data-cost="1000" hidden>
+            <button onclick="buyd8()" onmouseover='showTooltip(event, "D8", "Gain 1% more dice accumulatively", "Cost: 1k")' onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d10" data-cost="1000" hidden>
+            <button onclick="buyd10()" onmouseover='showTooltip(event, "D10", "Gain 1% more dice accumulatively", "Cost: 1k")' onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d12" data-cost="1000" hidden>
+            <button onclick="buyd12()" onmouseover="showTooltip(event, 'D12', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="d20" data-cost="1000" hidden>
+            <button onclick="buyd20()" onmouseover="showTooltip(event, 'D20', 'Gain 1% more dice accumulatively', 'Cost: 1k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="horde" data-cost="5000" hidden>
+            <button onclick="buyhorde()" onmouseover="showTooltip(event, 'Horde', 'Gain x2 more dice from dice goblins', 'Cost: 5k')" onmouseout="hideTooltip()">🪙</button>
+        </div>
+
+        <div class="upgradeBox" id="feather" data-cost="5000" hidden>
+            <button onclick="buyfeather()" onmouseover="showTooltip(event, 'Feather', 'Decrease rolling time by 0.2 seconds', 'Cost: 5k')" onmouseout="hideTooltip()">🪶</button>
+        </div>
+
+        <div class="upgradeBox" id="bautoluck" data-cost="10000" hidden>
+            <button onclick="buybautoluck()" onmouseover="showTooltip(event, 'Better auto luck', 'Increase lowest amount from autorollers by +0.02 at base', 'Cost: 10k')" onmouseout="hideTooltip()">🍀</button>
+        </div>
+
+        <div class="upgradeBox" id="wood" data-cost="25000" hidden>
+            <button onclick="buywooddice()" onmouseover="showTooltip(event, 'Wood Dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="stone" data-cost="25000" hidden>
+            <button onclick="buystonedice()" onmouseover="showTooltip(event, 'Stone Dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="bronze" data-cost="25000" hidden>
+            <button onclick="buybronzedice()" onmouseover="showTooltip(event, 'Bronze dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="silver" data-cost="25000" hidden>
+            <button onclick="buysilverdice()" onmouseover="showTooltip(event, 'Silver dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="gold" data-cost="25000" hidden>
+            <button onclick="buygolddice()" onmouseover="showTooltip(event, 'Gold dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="emerald" data-cost="25000" hidden>
+            <button onclick="buyemeralddice()" onmouseover="showTooltip(event, 'Emerald dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="trans" data-cost="25000" hidden>
+            <button onclick="buytransdice()" onmouseover="showTooltip(event, 'Transparent dice', 'Gain 1% more dice accumulatively', 'Cost: 25k')" onmouseout="hideTooltip()">🎲</button>
+        </div>
+
+        <div class="upgradeBox" id="combo" data-cost="100000" hidden>
+            <button onclick="buycombo()" onmouseover="showTooltip(event, 'Combo', 'Increase rolling amount by x1.1 per roll but goes down by x1.05 every second. STAYS ON PRESTIGE', 'Cost: 100k')" onmouseout="hideTooltip()">💥</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="box devmodear" id="devmodeget5autorollers" hidden>
+    <button onclick="devmodeget5autorollers()">
+        5 Autorollers<div>Get five autorollers for free!</div>
+    </button>
+</div>
+<div class="box devmodetf" id="devmodemoretf" hidden>
+    <button onclick="devmodegetmoretf()">
+        5 goblins<div>Get five dice goblins for free!</div>
+    </button>
+</div>
+<div class="box devmodect" id="devmodeget5casinotables" hidden>
+    <button onclick="devmodeget5casintotables()">
+        5 tables<div>Get five casino tables for free!</div>
+    </button>
+</div>
+<div class="box devmodepp" id="devmodegetmorepp" hidden>
+    <button onclick="devmodegetmorepp()">
+        5 Prestige points<div>Get five prestige points for free!</div>
+    </button>
+</div>
+<div class="box resetsave" id="resetsave">
+    <button onclick="resetsave()">
+        Reset<div>Resetsave entirely</div>
+    </button>
+</div>
+<div class="box prestige" id="prestigebutton" hidden>
+    <button onclick="prestige()">
+        Prestige<div>Reset your progress for <span id="prestige"></span> Prestige points!</div>
+    </button>
+</div>
+<div id="diamondDice" hidden>💎🎲</div>
+<div id="rightSide">
+<div id="challengeUI" hidden>
+
+    <!-- LEFT: challenge list -->
+    <div id="challengeList" hidden>
+        <button class="challengeBtn" onclick="selectChallenge(0)">Terrible Crits</button>
+        <button class="challengeBtn" onclick="selectChallenge(1)">Slow Hands</button>
+        <button class="challengeBtn" onclick="selectChallenge(2)">Nerfed dice</button>
+        <button class="challengeBtn" onclick="selectChallenge(3)">Idle only</button>
+        <button class="challengeBtn" onclick="selectChallenge(4)">Manual dice</button>
+        <button class="challengeBtn" onclick="selectChallenge(5)">Frozen dice</button>
+        <button class="challengeBtn" onclick="selectChallenge(6)">Locked Power</button>
+        <button class="challengeBtn" onclick="selectChallenge(7)">Half Reality</button>
+        <button class="challengeBtn" onclick="selectChallenge(8)">Precision Mode</button>
+    </div>
+
+    <!-- RIGHT: info panel -->
+    <div id="challengeInfo" hidden>
+        <div id="challengeDesc" hidden>
+            Select a challenge to see details.
+        </div>
+
+        <button id="startChallengeBtn" onclick="startChallenge()" hidden>
+            Start Challenge
+        </button>
+    </div>
+
+</div>
+<div id="tooltip"></div>
+<div id="skillTreeWrapper" hidden>
+    <div style="position:absolute; top:10px; left:10px; color:white; font-weight:bold; z-index:3;">
+        Prestige Points: <span id="prestigePoints">0</span>
+    </div>
+
+    <div id="skillTree">
+        
+        <div class="skill" id="pb"
+        style="left:200px; top:150px;"
+        onclick="buyPrestigex2()" onmouseover="showTooltip(event, 'Prestige Beginnings', 'Gain 2x more dice from everything!', 'Cost: 2 prestige points')" onmouseout="hideTooltip()">
+        🌌
+        </div>
+        <div class="skill" id="rcc" hidden
+        style="left:400px; top:200px;"
+        onclick="buyRollceptionception()" onmouseover="showTooltip(event, 'Rollceptionception', 'Rollception stays on prestige', 'Cost: 7 prestige points')" onmouseout="hideTooltip()">
+        🔄
+        </div>
+        <div class="skill" id="rccc" hidden
+        style="left:500px; top:250px;"
+        onclick="buyRollceptionceptionception()" onmouseover="showTooltip(event, 'Rollceptionceptionception', 'Rollception multiplier increases rolls (not dice, rolls) (max 5x)', 'Cost: 25 prestige points')" onmouseout="hideTooltip()">
+        🔄
+        </div>
+        <div class="skill" id="rcx4" hidden
+        style="left:475px; top:375px;"
+        onclick="buyRollceptionx4()" onmouseover="showTooltip(event, 'Rollceptionx4', 'Rollception bonus uses total rolls, not rolls within prestige', 'Cost: 75 prestige points')" onmouseout="hideTooltip()">
+        🔄
+        </div>
+        <div class="skill" id="gp" hidden
+        style="left:300px; top:300px;"
+        onclick="buyGamblersprophecy()" onmouseover="showTooltip(event, 'Gamblers Prophecy', 'Increase roll base by +0.5', 'Cost: 3 prestige points')" onmouseout="hideTooltip()">
+        🎰
+        </div>
+        <div class="skill" id="wd" hidden
+        style="left:400px; top:400px;"
+        onclick="buyWeighteddice()" onmouseover="showTooltip(event, 'Weighted Dice', 'Increase base highest number you can roll by +1', 'Cost: 5 prestige points')" onmouseout="hideTooltip()">
+        🪨
+        </div>
+        <div class="skill" id="dp" hidden
+        style="left:500px; top:475px;"
+        onclick="buyTripledprestige()" onmouseover="showTooltip(event, 'Tripled Prestige', 'Triple prestige point gain', 'Cost: 7 prestige points')" onmouseout="hideTooltip()">
+        🌌
+        </div>
+        <div class="skill" id="pd" hidden
+        style="left:600px; top:575px;"
+        onclick="buyPointeddice()" onmouseover="showTooltip(event, 'Pointed Dice', 'Dice gain (everything) is increased by amount of prestige points left over ((pp * 0.01) + 1, soft cap at 75)', 'Cost: 50 prestige points')" onmouseout="hideTooltip()">
+        🌌
+        </div>
+        <div class="skill" id="le" hidden
+        style="left:325px; top:450px;"
+        onclick="buyLuckyedges()" onmouseover="showTooltip(event, 'Lucky Edges', 'Increase base lowest number you can roll by +1', 'Cost: 7 prestige points')" onmouseout="hideTooltip()">
+        🍀
+        </div>
+        <div class="skill" id="ld" hidden
+        style="left:425px; top:550px;"
+        onclick="buyLoadeddice()" onmouseover="showTooltip(event, 'Loaded Dice', 'Increase base roll by +2', 'Cost: 20 prestige points')" onmouseout="hideTooltip()">
+        🎯
+        </div>
+        <div class="skill" id="ig" hidden
+        style="left:525px; top:650px;"
+        onclick="buyImpossiblegeometry()" onmouseover="showTooltip(event, 'Impossible Geometry', 'Increase base minimum roll by +2, and base maximum roll by +10', 'Cost: 75 prestige points')" onmouseout="hideTooltip()">
+        📐
+        </div>
+        <div class="skill" id="ls" hidden
+        style="left:200px; top:350px;"
+        onclick="buyLuckystrike()" onmouseover="showTooltip(event, 'Lucky Strike', 'Increase Crit and Super crit gain by x1.5', 'Cost: 5 prestige points')" onmouseout="hideTooltip()">
+        🍀
+        </div>
+        <div class="skill" id="se" hidden
+        style="left:250px; top:450px;"
+        onclick="buySharperedges()" onmouseover="showTooltip(event, 'Sharper Edges', 'Increase critical chance by +1%', 'Cost: 15 prestige points')" onmouseout="hideTooltip()">
+        🗡️
+        </div>
+        <div class="skill" id="ese" hidden
+        style="left:150px; top:450px;"
+        onclick="buyEvensharperedges()" onmouseover="showTooltip(event, 'Supercritical Mastery', 'Increase Super critical chance by +0.1%', 'Cost: 15 prestige points')" onmouseout="hideTooltip()">
+        🔪
+        </div>
+        <div class="skill" id="els" hidden
+        style="left:200px; top:550px;"
+        onclick="buyEvenluckierstrike()" onmouseover="showTooltip(event, 'Even Luckier Strike', 'Increase Crit and Super crit gain by x1.5 again', 'Cost: 20 prestige points')" onmouseout="hideTooltip()">
+        🍀
+        </div>
+        <div class="skill" id="rb" hidden
+        style="left:200px; top:650px;"
+        onclick="buyRealitybreak()" onmouseover="showTooltip(event, 'Reality Break', 'Increase Super crit gain by x15', 'Cost: 40 prestige points')" onmouseout="hideTooltip()">
+        🌠
+        </div>
+        <div class="skill" id="dgt" hidden
+        style="left:100px; top:150px;"
+        onclick="buydicegoblintraining()" onmouseover="showTooltip(event, 'Dice Goblin Training', 'x2 gains from Dice goblins', 'Cost: 5 prestige points')" onmouseout="hideTooltip()">
+        👺
+        </div>
+        <div class="skill" id="al" hidden
+        style="left:100px; top:50px;"
+        onclick="buyassemblyline()" onmouseover="showTooltip(event, 'Assembly Line', 'x2 gains from Auto rollers', 'Cost: 4 prestige points')" onmouseout="hideTooltip()">
+        🏭
+        </div>
+        <div class="skill" id="atk" hidden
+        style="left:0px; top:150px;"
+        onclick="buyattack()" onmouseover="showTooltip(event, 'Attack', 'x2 gains from Dice goblins', 'Cost: 20 prestige points')" onmouseout="hideTooltip()">
+        🗡️
+        </div>
+        <div class="skill" id="cl" hidden
+        style="left:100px; top:250px;"
+        onclick="buycasinosluck()" onmouseover="showTooltip(event, 'Casinos Luck', 'x2 gains from Casino tables', 'Cost: 15 prestige points')" onmouseout="hideTooltip()">
+        🎰
+        </div>
+        <div class="skill" id="c" hidden
+        style="left:400px; top:300px;"
+        onclick="buychallenges()" onmouseover="showTooltip(event, 'Challenges', 'Unlock challenges', 'Cost: 7 prestige points')" onmouseout="hideTooltip()">
+        🔥
+        </div>
+        <svg id="skillLines">
+                <!-- rollception branch -->
+                    <line id="pb-rcc" x1="230" y1="180" x2="430" y2="230" stroke="white" stroke-width="2" hidden></line>
+                    <line id="rcc-rccc" x1="430" y1="230" x2="530" y2="280" stroke="white" stroke-width="2" hidden></line>
+                    <line id="rcc-rcx4" x1="430" y1="230" x2="505" y2="405" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- rolling branch -->
+                    <line id="gp-wd" x1="330" y1="330" x2="430" y2="430" stroke="white" stroke-width="2" hidden></line>
+                    <line id="wd-le" x1="430" y1="430" x2="355" y2="480" stroke="white" stroke-width="2" hidden></line>
+                    <line id="wd-dp" x1="430" y1="430" x2="530" y2="505" stroke="white" stroke-width="2" hidden></line>
+                    <line id="dp-pd" x1="530" y1="505" x2="630" y2="605" stroke="white" stroke-width="2" hidden></line>
+                    <line id="wd-ld" x1="430" y1="430" x2="455" y2="580" stroke="white" stroke-width="2" hidden></line>
+                    <line id="le-ld" x1="355" y1="480" x2="455" y2="580" stroke="white" stroke-width="2" hidden></line>
+                    <line id="ld-ig" x1="455" y1="580" x2="555" y2="680" stroke="white" stroke-width="2" hidden></line>
+                    <line id="pb-gp" x1="230" y1="180" x2="330" y2="330" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- crit branch -->
+                    <line id="pb-ls" x1="230" y1="180" x2="230" y2="380" stroke="white" stroke-width="2" hidden></line>
+                    <line id="ls-se" x1="230" y1="380" x2="280" y2="480" stroke="white" stroke-width="2" hidden></line>
+                    <line id="ls-sm" x1="230" y1="380" x2="180" y2="480" stroke="white" stroke-width="2" hidden></line>
+                    <line id="se-els" x1="280" y1="480" x2="230" y2="580" stroke="white" stroke-width="2" hidden></line>
+                    <line id="sm-els" x1="180" y1="480" x2="230" y2="580" stroke="white" stroke-width="2" hidden></line>
+                    <line id="els-rb" x1="230" y1="580" x2="230" y2="680" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- goblin branch -->
+                    <line id="pb-dgt" x1="230" y1="180" x2="130" y2="180" stroke="white" stroke-width="2" hidden></line>
+                    <line id="dgt-atk" x1="130" y1="180" x2="30" y2="180" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- autoroller branch -->
+                    <line id="pb-al" x1="230" y1="180" x2="130" y2="80" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- casino table branch -->
+                    <line id="pb-cl" x1="230" y1="180" x2="130" y2="280" stroke="white" stroke-width="2" hidden></line>
+
+                <!-- challenge branch -->
+                    <line id="pb-c" x1="430" y1="230" x2="430" y2="330" stroke="white" stroke-width="2" hidden></line>
+        </svg>
+    </div>
+</div>
+</div>
+<style>
+#dice{
+    font-size: 4vh;
+}
+.invisibleButton {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+#achievementGrid {
+    display: grid;
+    grid-template-columns: repeat(6, 60px);
+    gap: 10px;
+    justify-content: center;
+}
+.locked {
+    filter: grayscale(100%);
+    opacity: 0.4;
+}
+.achievement {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: gold;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+.achievement2 {
+    width: 60px;
+    height: 60px;
+    background: #444;
+    border-radius: 8px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+#menuToggle {
+    position: absolute;
+    top: -25px;
+    left: 10px;
+    font-size: 12px;
+}
+.multipliers {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    top: 10px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.resetsave {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 10px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.devmodear {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 90px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.devmodetf {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 180px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.devmodect {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 270px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.devmodepp {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 360px;
+    left: 10px;       /* distance from left */
+    background: lightblue; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+.prestige {
+    position: fixed;  /* keeps it in the same place even when scrolling */
+    bottom: 10px;
+    right: 10px;       /* distance from left */
+    background: purple; /* optional styling */
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;    /* makes it appear above other elements */
+}
+/* background flash */
+.critFlash {
+    animation: critFade 0.4s ease-out;
+}
+
+@keyframes critFade {
+    0% {
+        background-color: red;
+    }
+    100% {
+        background-color: #222;
+    }
+}
+
+/* screen shake */
+.shake {
+    animation: shake 0.4s;
+}
+
+.bigshake {
+    animation: bigshake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, -5px); }
+    75% { transform: translate(-5px, -5px); }
+    100% { transform: translate(0px, 0px); }
+}
+
+@keyframes bigshake {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(-20px, 20px); }
+    50% { transform: translate(20px, -20px); }
+    75% { transform: translate(-20px, -20px); }
+    100% { transform: translate(0px, 0px); }
+}
+
+.superCritFlash {
+    animation: superCritFade 0.4s ease-out;
+}
+
+@keyframes superCritFade {
+    0% { background-color: purple; }
+    100% { background-color: #222; }
+}
+
+.floating-number {
+    position: absolute;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    opacity: 1;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    color: black;
+    font-size: 30px;
+    text-shadow: 0 0 5px white;
+}
+
+.floating-number.crit {
+    color: red;
+    font-size: 45px;
+    text-shadow: 0 0 5px white;
+}
+
+.floating-number.supercrit {
+    color: purple;
+    font-size: 60px;
+    text-shadow: 0 0 10px gold;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-60px); opacity: 0; }
+}
+
+#diamondDice {
+    position: fixed;
+    font-size: 50px;
+    cursor: pointer;
+    z-index: 999;
+    animation: floatDiamond 2s infinite ease-in-out;
+}
+
+@keyframes floatDiamond {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+#game {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+#leftColumn, #rightColumn {
+    width: 310px;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+#centerColumn {
+    text-align: center;
+}
+
+#leftColumn .box,
+#rightColumn .box{
+    margin-bottom: 5px;
+}
+
+#leftColumn::-webkit-scrollbar,
+#rightColumn::-webkit-scrollbar {
+    width: 8px;
+}
+
+#leftColumn::-webkit-scrollbar-thumb,
+#rightColumn::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+#leftColumn::-webkit-scrollbar-thumb:hover,
+#rightColumn::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+#upgradeGrid{
+display:grid;
+grid-template-columns: repeat(3, 60px);
+gap:20px;
+justify-content:center;
+margin:auto;
+}
+
+.upgradeBox{
+width:50px;
+height:50px;
+background:#333;
+border:2px solid #666;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+cursor:pointer;
+transition:transform 0.1s;
+}
+
+.tooltip {
+    visibility: hidden;
+    position: absolute;
+    bottom: 70px;
+    background: black;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 5px;
+    width: 120px;
+}
+
+.achievement:hover .tooltip {
+    visibility: visible;
+}
+
+.upgradeBox:hover{
+transform:scale(1.15);
+background:#444;
+}
+
+#tooltip{
+position:fixed;
+background:#111;
+color:white;
+padding:8px 12px;
+border-radius:6px;
+border:1px solid #555;
+font-size:14px;
+pointer-events:none;
+display:none;
+z-index:2000;
+max-width:200px;
+}
+
+.upgradeBox button{
+background:none;
+border:none;
+font-size:28px;
+cursor:pointer;
+color:white;
+}
+
+.upgradeBox{
+opacity:0;
+transition:opacity 0.3s;
+}
+
+.upgradeBox:not([hidden]){
+opacity:1;
+}
+
+.upgradeBox[hidden]{
+    display:none;
+}
+
+.upgradeBox{
+filter: grayscale(100%);
+opacity:0.5;
+transition:0.2s;
+}
+
+.upgradeBox.affordable{
+filter:none;
+opacity:1;
+box-shadow:0 0 8px gold;
+}
+
+#bottomArea{
+position: fixed;
+bottom: 10px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(0,0,0,0.6);
+padding: 8px 15px;
+border-radius: 10px;
+}
+
+.saving {
+    bottom: 150px;
+}
+
+#skillTreeWrapper{
+    position: fixed;   /* attach to screen */
+    bottom: 100px;      /* above prestige button */
+    right: 10px;       /* same side as prestige */
+    width: 535px;
+    height: 300px;
+    overflow: hidden;
+    border: 2px solid white;
+    background: rgba(0,0,0,0.6);
+}
+
+#skillTree{
+    position:absolute;
+    width:2000px;
+    height:2000px;
+    transform-origin:0 0;
+}
+
+.skill{
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:#444;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    cursor:pointer;
+    z-index: 2;
+}
+
+#skillLines{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none; /* lets clicks go through to skills */
+    z-index: 1;
+}
+
+.bought {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    box-shadow: none;
+    border: 2px solid #555;
+}
+
+#challengeUI {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    bottom: 150px;
+}
+
+#challengeList {
+    display: grid;
+    grid-template-columns: repeat(3, 90px);
+    gap: 10px;
+}
+
+.challengeBtn {
+    padding: 5px;
+    background: #222;
+    color: white;
+    border: 1px solid #555;
+    cursor: pointer;
+}
+
+.challengeBtn:hover {
+    background: #333;
+}
+
+#challengeInfo {
+    width: 200px;
+    background: #111;
+    padding: 15px;
+    border: 1px solid #555;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#challengeDesc {
+    margin-bottom: 15px;
+    min-height: 80px;
+}
+
+#startChallengeBtn {
+    padding: 10px;
+    background: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#startChallengeBtn:hover {
+    background: #666;
+}
+
+#rightSide {
+    right: 20px;   /* pushes it to the right side */
+    top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* keeps everything right aligned */
+    gap: 20px;
+}
+
+</style>
+
+<script>
+let score = 0;
+let totaldice = 0;
+let autoCount = 0;
+let dicegoblinCount = 0;
+let casinotableCount = 0;
+let autoMin = 0.06;
+let dicegoblinMin = 0.8;
+let casinotableMin = 10;
+let autoMax = 0.12;
+let dicegoblinMax = 1.6;
+let casinotableMax = 20;
+let autoCost = 15;
+let dicegoblinCost = 200;
+let casinotableCost = 15000;
+let dicegoblinmultiplier = 1;
+let spinning = false;
+let rolltime = 800;
+let totalrolls = 0;
+let ACTUALtotalrolls = 0;
+let Rollceptiongain = 1;
+let RollceptionUnlocked = false;
+let manualrollmin = 1;
+let manualrollmax = 6;
+let autorollmultiplier = 1;
+let achievement100rolls = 0;
+let achievement100rollsshownbefore = 0;
+let achievement1000rolls = 0;
+let achievement1000rollsshownbefore = 0;
+let autoluckUnlocked = false;
+let fasterrollersUnlocked = false;
+let bautoluckUnlocked = false;
+let comboUnlocked = false;
+let firstdicesetcanget = false;
+let d4Unlocked = false;
+let d6Unlocked = false;
+let d8Unlocked = false;
+let d10Unlocked = false;
+let d12Unlocked = false;
+let d20Unlocked = false;
+let wooddiceUnlocked = false;
+let stonediceUnlocked = false;
+let bronzediceUnlocked = false;
+let silverdiceUnlocked = false;
+let golddiceUnlocked = false;
+let emeralddiceUnlocked = false;
+let transdiceUnlocked = false;
+let combo = 1;
+let critchance = 0.01;
+let supercritchance = 0.001;
+let critmultiplier = 4;
+let supercritmultiplier = 16;
+let currentcritmultiplier = 1;
+let critted = false;
+let supercritted = false;
+let clicksuntildevmode = 25;
+let devmode = false;
+let diamondDiceActive = false;
+let clickbuff = 0;
+let clickbuffamnt = 1;
+let dicetypesmultiplier = 1;
+let timeflux = 0;
+let prestigeGain = 1;
+let prestigeMultiplier = 1;
+let prestigeMult = 1;
+let prestigePoints = 0;
+let prestigex2Unlocked = false;
+let rollceptionceptionUnlocked = false;
+let featherUnlocked = false;
+let weighteddiceUnlocked = false;
+let luckyedgesUnlocked = false;
+let loadeddiceUnlocked = false;
+let impossiblegeometryUnlocked = false;
+let sharperedgesUnlocked = false;
+let evensharperedgesUnlocked = false;
+let luckystrikeUnlocked = false;
+let evenluckierstrikeUnlocked = false;
+let realitybreakUnlocked = false;
+let dicegoblinmultiplierpres = 1;
+let manualrollminbaseincrease = 0;
+let manualrollmaxbaseincrease = 0;
+let dicegoblintrainingUnlocked = false;
+let assemblylineUnlocked = false;
+let attackUnlocked = false;
+let casinosluckUnlocked = false;
+let casinotablemultiplier = 1;
+let casinotablemultiplierpres = 1;
+let rollceptionceptionceptionUnlocked = false;
+let rollceptionx4Unlocked = false;
+let gamblersprophecyUnlocked = false;
+let tripledprestigeUnlocked = false;
+let pointeddiceUnlocked = false;
+let prestigepointmultiplier = 1;
+let achievementclickit = 0;
+let achievementclickitshownbefore = 0;
+let toggled = 0;
+let autorollmultiplierpres = 1;
+let ach3 = 0;
+let ach4 = 0;
+let ach5 = 0;
+let ach6 = 0;
+let ach7 = 0;
+let ach8 = 0;
+let ach9 = 0;
+let ach10 = 0;
+let ach11 = 0;
+let ach12 = 0;
+let ach13 = 0;
+let ach14 = 0;
+let ach15 = 0;
+let ach16 = 0;
+let ach17 = 0;
+let ach18 = 0;
+let ach19 = 0;
+let ach20 = 0;
+let ach21 = 0;
+let ach22 = 0;
+let ach23 = 0;
+let ach24 = 0;
+let ach25 = 0;
+let ach26 = 0;
+let ach27 = 0;
+let ach28 = 0;
+let hordeUnlocked = false;
+let timesprestiged = 0;
+let pointeddicecurrentMultiplier = 1;
+let challengesUnlocked = false;
+let selectedChallenge = null;
+let challenge1Change = 1;
+let challenge1Change2 = 1;
+let challenge0change = 1;
+let challenge0goal = 1e5;
+let challenge1goal = 1e5;
+let challenge2goal = 1e5;
+let challenge3goal = 2.5e4;
+let challenge4goal = 1e6;
+let challenge5goal = 1e4;
+let challenge6goal = 2.5e5;
+let challenge7goal = 1e6;
+let challenge8goal = 1e7;
+let challenge0desc = "Crit chance x50, but crits give 0.01x less than normal rolls. Goal: 100k Reward: Crits give x1.5 more";
+let challenge1desc = "Manual rolling takes 5x longer, buyables give 50% less. Goal: 100k Reward: Manual rolls takes -0.1 seconds";
+let challenge2desc = "Dice is multiplied by x0.5 Goal: 100k dice Reward: Dice is multiplied by x1.1";
+let challenge3desc = "You cannot click, start with 1 auto roller. Goal: 25k dice Reward: Start with 1 autoroller on prestige";
+let challenge4desc = "You can only gain dice from clicking. Goal: 1m dice Reward: Clicks give x1.1 more dice";
+let challenge5desc = "No multipliers. Goal: 10k Reward: x1.1 all dice gain";
+let challenge6desc = "Prestige upgrades disabled. Goal: 250k Reward: Prestige point gain x1.5";
+let challenge7desc = "All dice gains are square rooted. Goal: 1m dice Reward: Common exponent +0.05";
+let challenge8desc = "Only rolls at maximum value give dice. Goal: 10m dice Reward: Base max roll +10";
+let challenge0completions = 0;
+let challenge1completions = 0;
+let challenge2completions = 0;
+let challenge3completions = 0;
+let challenge4completions = 0;
+let challenge5completions = 0;
+let challenge6completions = 0;
+let challenge7completions = 0;
+let challenge8completions = 0;
+let challenge0reward = 1;
+let challenge1reward = 0;
+let challenge2reward = 1;
+let challenge3reward = 0;
+let challenge4reward = 1;
+let challenge5reward = 1;
+let challenge6reward = 1;
+let challenge7reward = 0;
+let challenge8reward = 0;
+
+const challengeData = [
+    challenge0desc,
+    challenge1desc,
+    challenge2desc,
+    challenge3desc,
+    challenge4desc,
+    challenge5desc,
+    challenge6desc,
+    challenge7desc,
+    challenge8desc
+];
+
+const diamondDice = document.getElementById("diamondDice");
+const dice = document.getElementById("dice");
+updateDisplay();
+
+let zoom = 1;
+let offsetX = 0;
+let offsetY = 0;
+
+// GAME FUNCTIONS
+function rollDice(){}
+
+function updateDisplay(){}
+
+function saveGame(){}
+
+// SKILL TREE CONTROLS (put it here)
+let tree = document.getElementById("skillTree");
+let wrapper = document.getElementById("skillTreeWrapper");
+
+let dragging = false;
+
+wrapper.addEventListener("mousedown", () => {
+    dragging = true;
+});
+
+document.addEventListener("mouseup", () => {
+    dragging = false;
+});
+
+document.addEventListener("mousemove", (e) => {
+    if(!dragging) return;
+
+    offsetX += e.movementX;
+    offsetY += e.movementY;
+
+    tree.style.transform =
+        `translate(${offsetX}px, ${offsetY}px) scale(${zoom})`;
+});
+
+// ZOOM
+wrapper.addEventListener("wheel", (e) => {
+
+    e.preventDefault();
+
+    if(e.deltaY < 0){
+        zoom += 0.1;
+    } else {
+        zoom -= 0.1;
+    }
+
+    zoom = Math.max(0.5, Math.min(2, zoom));
+
+    tree.style.transform =
+        `translate(${offsetX}px, ${offsetY}px) scale(${zoom})`;
+});
+
+document.addEventListener("mousemove", function(e){
+        const tooltip = document.getElementById("tooltip");
+        tooltip.style.left = e.clientX + 15 + "px";
+        tooltip.style.top = e.clientY + 15 + "px";
+    });
+
+function resetsave() {
+    localStorage.removeItem("diceClickerSave")
+    alert("Save reset! Refresh the page to reset, dont refresh and your save wont be reset.");
+}
+
+// DICE CLICK
+dice.onclick = function() {
+    if (spinning) return;
+
+    spinning = true;
+    dice.classList.add("spinning");
+    dice.textContent = "?";
+
+    // Force a reflow so animation starts properly
+    void dice.offsetWidth;
+
+    setTimeout(() => {
+        if (selectedChallenge !== 3) {
+        dice.classList.remove("spinning");
+
+        // Reset manual roll range
+        manualrollmin = 1 + manualrollminbaseincrease;
+        manualrollmax = 6 + manualrollmaxbaseincrease;
+
+        // Calculate roll
+        let roll;
+
+        if (comboUnlocked) {
+            combo += 0.1;
+        }
+
+        let rand = Math.random();
+
+        if (selectedChallenge === 0) {
+            rand = Math.random() * 0.02
+        }
+
+        if (rand < supercritchance) {
+            currentcritmultiplier = supercritmultiplier * challenge0change;
+            critted = false;
+            supercritted = true;
+        } 
+            else if (rand < critchance) {
+                currentcritmultiplier = critmultiplier * challenge0change;
+                supercritted = false;
+                critted = true;
+            } 
+                else {
+                    currentcritmultiplier = 1;
+                    critted = false;
+                    supercritted = false;
+                }
+
+        if (RollceptionUnlocked) {
+            if (rollceptionx4Unlocked) {
+                Rollceptiongain = ACTUALtotalrolls * 0.001 + 1;
+            } else {
+            Rollceptiongain = totalrolls * 0.001 + 1;
+            }
+            roll = (Math.floor(Math.random() * (6 + manualrollmaxbaseincrease)) + (1 + manualrollminbaseincrease)) * Rollceptiongain;
+            manualrollmin *= Rollceptiongain * combo * clickbuffamnt * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+            manualrollmax *= Rollceptiongain * combo * clickbuffamnt * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+            } else {
+                roll = Math.floor(Math.random() * (6 + manualrollmaxbaseincrease)) + (1 + manualrollminbaseincrease);
+                Rollceptiongain = 1;
+                manualrollmin *= combo * clickbuffamnt * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+                manualrollmax *= combo * clickbuffamnt * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+            }
+        
+        roll = roll * combo * currentcritmultiplier * clickbuffamnt * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+
+        roll = Math.round(roll * 100) / 100;
+        dice.textContent = formatNumber(roll);
+        
+        score += roll;
+        totaldice += roll;
+        if (rollceptionceptionceptionUnlocked) {
+            totalrolls += 1 * Math.min(Rollceptiongain, 5);
+            ACTUALtotalrolls += 1 * Math.min(Rollceptiongain, 5);
+        } else {
+            totalrolls += 1;
+            ACTUALtotalrolls += 1;
+        }
+
+        dice.classList.remove("shake", "bigshake");
+
+        if (supercritted) {
+            showFloatingNumber(roll, critted, supercritted)
+            dice.classList.add("bigshake");
+
+            setTimeout(() => {
+                dice.classList.remove("bigshake");
+            }, 400);
+
+            } else if (critted) {
+                showFloatingNumber(roll, critted, supercritted)
+                dice.classList.add("shake");
+
+                setTimeout(() => {
+                    dice.classList.remove("shake");
+                }, 400);
+        } else {
+            showFloatingNumber(roll);
+        }
+
+        if (ACTUALtotalrolls <= totalrolls) {
+            ACTUALtotalrolls = totalrolls
+        }
+        if (ACTUALtotalrolls >= 100) {
+            achievement100rolls = 1;
+            document.getElementById("ach1").classList.remove("locked")
+        }
+        if (ACTUALtotalrolls >= 1000) {
+            achievement1000rolls = 1;
+            document.getElementById("ach2").classList.remove("locked")
+        }
+        if (score >= 1) {
+            ach4 = 1;
+            document.getElementById("ach4").classList.remove("locked")
+        }
+        if (score >= 1e+3) {
+            ach5 = 1;
+            document.getElementById("ach5").classList.remove("locked")
+        }
+        if (score >= 1e+5) {
+            ach6 = 1;
+            document.getElementById("ach6").classList.remove("locked")
+        }
+        if (score >= 1e+6) {
+            ach7 = 1;
+            document.getElementById("ach7").classList.remove("locked")
+        }
+        if (score >= 1e+9) {
+            ach8 = 1;
+            document.getElementById("ach8").classList.remove("locked")
+        }
+        if (score >= 1e+12) {
+            ach9 = 1;
+            document.getElementById("ach9").classList.remove("locked")
+        }
+        if (score >= 1e+15) {
+            ach10 = 1;
+            document.getElementById("ach10").classList.remove("locked")
+        }
+        if (score >= 1e+18) {
+            ach11 = 1;
+            document.getElementById("ach11").classList.remove("locked")
+        }
+        if (score >= 1e+21) {
+            ach12 = 1;
+            document.getElementById("ach12").classList.remove("locked")
+        }
+        if (score >= 1e+24) {
+            ach13 = 1;
+            document.getElementById("ach13").classList.remove("locked")
+        }
+        if (score >= 1e+27) {
+            ach14 = 1;
+            document.getElementById("ach14").classList.remove("locked")
+        }
+        if (score >= 1e+30) {
+            ach15 = 1;
+            document.getElementById("ach15").classList.remove("locked")
+        }
+        if (score >= 1e+33) {
+            ach16 = 1;
+            document.getElementById("ach16").classList.remove("locked")
+        }
+        if (score >= 1e+36) {
+            ach17 = 1;
+            document.getElementById("ach17").classList.remove("locked")
+        }
+        spinning = false;
+        updateDisplay();
+        }
+    }, 800 * challenge1Change); // this 800ms is how long the animation runs
+};
+
+function clickit() {
+
+    // achievement
+    if (achievementclickit === 0) {
+        achievementclickit = 1;
+        document.getElementById("ach3").classList.remove("locked")
+    }
+
+    // devmode unlock
+    clicksuntildevmode -= 1;
+    if (clicksuntildevmode <= 0 && !devmode) {
+        devmode = true;
+        alert("Test mode enabled!");
+        console.log("Test mode enabled!");
+    }
+
+    updateDisplay();
+}
+
+// Buy an auto dice generator
+function buyAuto() {
+    if (score >= autoCost) {
+        score -= autoCost;
+        autoCost = Math.floor(autoCost * 1.3);
+        autoCount++;
+        if (autoCount >= 1) {
+            ach18 = 1
+            document.getElementById("ach18").classList.remove("locked")
+            if (autoCount >= 5) {
+                ach19 = 1;
+                document.getElementById("ach19").classList.remove("locked")
+                if (autoCount >= 10) {
+                    ach20 = 1;
+                    document.getElementById("ach20").classList.remove("locked")
+                }
+            }
+        }
+        updateDisplay();
+    }
+}
+
+function buyDiceGoblin() {
+    if (score >= dicegoblinCost) {
+        score -= dicegoblinCost;
+        dicegoblinCost = Math.floor(dicegoblinCost * 1.3);
+        dicegoblinCount++;
+        if (dicegoblinCount >= 1) {
+            ach21 = 1
+            document.getElementById("ach21").classList.remove("locked")
+            if (dicegoblinCount >= 5) {
+                ach22 = 1;
+                document.getElementById("ach22").classList.remove("locked")
+                if (dicegoblinCount >= 10) {
+                    ach23 = 1;
+                    document.getElementById("ach23").classList.remove("locked")
+                }
+            }
+        }
+        updateDisplay();
+    }
+}
+
+function buyCasinoTable() {
+    if (score >= casinotableCost) {
+        score -= casinotableCost;
+        casinotableCost = Math.floor(casinotableCost * 1.3);
+        casinotableCount++;
+        if (casinotableCount >= 1) {
+            ach24 = 1
+            document.getElementById("ach24").classList.remove("locked")
+            if (casinotableCount >= 5) {
+                ach25 = 1;
+                document.getElementById("ach25").classList.remove("locked")
+                if (casinotableCount >= 10) {
+                    ach26 = 1;
+                    document.getElementById("ach26").classList.remove("locked")
+                }
+            }
+        }
+        updateDisplay();
+    }
+}
+
+function buyrollception() {
+    if (score >= 250) {
+        score -= 250;
+        RollceptionUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buycombo() {
+    if (score >= 100000) {
+        score -= 100000;
+        comboUnlocked = true;
+        updateDisplay();
+    }
+}
+
+
+function buyautoluck() {
+    if (score >= 100) {
+        score -= 100;
+        autorollmultiplier *= 2;
+        autoluckUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyfasterrollers() {
+    if (score >= 500) {
+        score -= 500;
+        autorollmultiplier *= 2;
+        fasterrollersUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buybautoluck() {
+    if (score >= 10000) {
+        score -= 10000;
+        autoMin += 0.02;
+        bautoluckUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyd4() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d4Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd6() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d6Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd8() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d8Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd10() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d10Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd12() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d12Unlocked = true;
+        updateDisplay();
+    }
+}
+function buyd20() {
+    if (score >= 1000) {
+        score -= 1000;
+        dicetypesmultiplier *= 1.01;
+        d20Unlocked = true;
+        updateDisplay();
+    }
+}
+function buywooddice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        wooddiceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buystonedice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        stonediceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buybronzedice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        bronzediceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buysilverdice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        silverdiceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buygolddice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        golddiceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buyemeralddice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        emeralddiceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buytransdice() {
+    if (score >= 25000) {
+        score -= 25000;
+        dicetypesmultiplier *= 1.01;
+        transdiceUnlocked = true;
+        updateDisplay();
+    }
+}
+function buyPrestigex2() {
+    if (prestigePoints >= 2) {
+        prestigePoints -= 2;
+        prestigeMultiplier *= 2;
+        prestigex2Unlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyRollceptionception() {
+    if (prestigePoints >= 7) {
+        if (prestigex2Unlocked) {
+            prestigePoints -= 7;
+            rollceptionceptionUnlocked = true;
+            updateDisplay();
+        }
+    }
+}
+
+function buyRollceptionceptionception() {
+    if (prestigePoints >= 25) {
+        if (rollceptionceptionUnlocked) {
+            prestigePoints -= 25;
+            rollceptionceptionceptionUnlocked = true;
+            updateDisplay();
+        }
+    }
+}
+
+function buyRollceptionx4() {
+    if (prestigePoints >= 75) {
+        if (rollceptionceptionUnlocked) {
+            prestigePoints -= 75;
+            rollceptionx4Unlocked = true;
+            updateDisplay();
+        }
+    }
+}
+
+function buyGamblersprophecy() {
+    if (prestigePoints >= 3) {
+        if (prestigex2Unlocked) {
+            prestigePoints -= 3;
+            manualrollminbaseincrease += 0.5;
+            manualrollmaxbaseincrease += 0.5;
+            gamblersprophecyUnlocked = true;
+            updateDisplay();
+        }
+    }
+}
+
+function buyWeighteddice() {
+    if (prestigePoints >= 5) {
+        if (gamblersprophecyUnlocked) {
+        prestigePoints -= 5;
+        manualrollmaxbaseincrease += 1;
+        weighteddiceUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyTripledprestige() {
+    if (prestigePoints >= 7) {
+        if (weighteddiceUnlocked) {
+        prestigePoints -= 7;
+        prestigepointmultiplier *= 3
+        tripledprestigeUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyPointeddice() {
+    if (prestigePoints >= 50) {
+        if (tripledprestigeUnlocked) {
+        prestigePoints -= 50;
+        pointeddiceUnlocked = true
+        updateDisplay();
+        }
+    }
+}
+
+function buyLuckyedges() {
+    if (prestigePoints >= 7) {
+        if (weighteddiceUnlocked) {
+        prestigePoints -= 7;
+        manualrollminbaseincrease += 1;
+        luckyedgesUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyLoadeddice() {
+    if (prestigePoints >= 20) {
+        if (luckyedgesUnlocked) {
+        prestigePoints -= 20;
+        manualrollminbaseincrease += 2;
+        manualrollmaxbaseincrease += 2;
+        loadeddiceUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyImpossiblegeometry() {
+    if (prestigePoints >= 75) {
+        if (loadeddiceUnlocked) {
+        prestigePoints -= 75;
+        manualrollminbaseincrease += 2;
+        manualrollmaxbaseincrease += 10;
+        impossiblegeometryUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buySharperedges() {
+    if (prestigePoints >= 15) {
+        if (luckystrikeUnlocked) {
+        prestigePoints -= 15;
+        critchance += 0.01;
+        sharperedgesUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyEvensharperedges() {
+    if (prestigePoints >= 15) {
+        if (luckystrikeUnlocked) {
+        prestigePoints -= 15;
+        supercritchance += 0.001;
+        evensharperedgesUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyLuckystrike() {
+    if (prestigePoints >= 5) {
+        if (prestigex2Unlocked) {
+        prestigePoints -= 5;
+        supercritmultiplier *= 1.5;
+        critmultiplier *= 1.5;
+        luckystrikeUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyEvenluckierstrike() {
+    if (prestigePoints >= 20) {
+        if (evensharperedgesUnlocked && sharperedgesUnlocked) {
+        prestigePoints -= 20;
+        supercritmultiplier *= 1.5;
+        critmultiplier *= 1.5;
+        evenluckierstrikeUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyRealitybreak() {
+    if (prestigePoints >= 40) {
+        if (evenluckierstrikeUnlocked) {
+        prestigePoints -= 40;
+        supercritmultiplier *= 15;
+        realitybreakUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buydicegoblintraining() {
+    if (prestigePoints >= 5) {
+        if (prestigex2Unlocked) {
+        prestigePoints -= 5;
+        dicegoblinmultiplierpres *= 2;
+        dicegoblintrainingUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyassemblyline() {
+    if (prestigePoints >= 4) {
+        if (prestigex2Unlocked) {
+        prestigePoints -= 4;
+        autorollmultiplierpres *= 2;
+        assemblylineUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyattack() {
+    if (prestigePoints >= 20) {
+        if (dicegoblintrainingUnlocked) {
+        prestigePoints -= 20;
+        dicegoblinmultiplierpres *= 2;
+        attackUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buycasinosluck() {
+    if (prestigePoints >= 15) {
+        if (prestigex2Unlocked) {
+        prestigePoints -= 15;
+        casinotablemultiplierpres *= 2;
+        casinosluckUnlocked = true;
+        updateDisplay();
+        }
+    }
+}
+
+function buyfeather() {
+    if (score >= 5000) {
+        score -= 5000;
+        rolltime -= 200;
+        featherUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buyhorde() {
+    if (score >= 5000) {
+        score -= 5000;
+        dicegoblinmultiplier *= 2;
+        hordeUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function buychallenges() {
+    if (prestigePoints >= 7) {
+        prestigePoints -= 7;
+        challengesUnlocked = true;
+        updateDisplay();
+    }
+}
+
+function selectChallenge(index) {
+    selectedChallenge = index;
+    if (selectedChallenge === 0) {
+        document.getElementById("challengeDesc").innerHTML = challenge0desc;
+        return;
+    }
+    if (selectedChallenge === 1) {
+        document.getElementById("challengeDesc").innerHTML = challenge1desc;
+        return;
+    }
+    if (selectedChallenge === 2) {
+        document.getElementById("challengeDesc").innerHTML = challenge2desc;
+        return;
+    }
+    if (selectedChallenge === 3) {
+        document.getElementById("challengeDesc").innerHTML = challenge3desc;
+        return;
+    }
+    if (selectedChallenge === 4) {
+        document.getElementById("challengeDesc").innerHTML = challenge4desc;
+        return;
+    }
+    if (selectedChallenge === 5) {
+        document.getElementById("challengeDesc").innerHTML = challenge5desc;
+        return;
+    }
+    if (selectedChallenge === 6) {
+        document.getElementById("challengeDesc").innerHTML = challenge6desc;
+        return;
+    }
+    if (selectedChallenge === 7) {
+        document.getElementById("challengeDesc").innerHTML = challenge7desc;
+        return;
+    }
+    if (selectedChallenge === 8) {
+        document.getElementById("challengeDesc").innerHTML = challenge8desc;
+        return;
+    }
+}
+
+function startChallenge() {
+    if (selectedChallenge === null) {
+        alert("Select a challenge first!");
+        return;
+    }
+
+    console.log("Starting challenge:", selectedChallenge);
+
+    // 👉 put your reset logic here
+    // example:
+    // activeChallenge = selectedChallenge;
+    // prestige(); or custom reset
+
+    if (confirm("Everything before prestige will be reset! Are you sure?")) {
+        prestige();
+        if (selectedChallenge === 0) {
+            challenge0change = 0.01; // make crits give 0.01x less than normal rolls
+        }
+        if (selectedChallenge === 1) {
+            challenge1Change = 5; // make rolls take 5x longer
+            challenge1Change2 = 0.5; // make buyables give 50% less
+        }
+        if (selectedChallenge === 3) {
+            autoCount = 1; // start with 1 autoroller
+        }
+    }
+}
+
+// DPS INCOME
+setInterval(function() {
+    totalMin = ((autoMin * autoCount * autorollmultiplier * autorollmultiplierpres) + (dicegoblinCount * dicegoblinMin * dicegoblinmultiplier * dicegoblinmultiplierpres) + (casinotableCount * casinotableMax * casinotablemultiplier * casinotablemultiplierpres)) * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+    totalMax = ((autoMax * autoCount * autorollmultiplier * autorollmultiplierpres) + (dicegoblinCount * dicegoblinMax * dicegoblinmultiplier * dicegoblinmultiplierpres) + (casinotableCount * casinotableMax * casinotablemultiplier * casinotablemultiplierpres)) * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+    gain = Math.random() * (totalMax - totalMin) + totalMin * challenge1Change2;
+    score += gain;
+    totaldice += gain;
+        if (score >= 1) {
+            ach4 = 1;
+            document.getElementById("ach4").classList.remove("locked")
+        }
+            if (score >= 1e+3) {
+            ach5 = 1;
+            document.getElementById("ach5").classList.remove("locked")
+        }
+        if (score >= 1e+5) {
+            ach6 = 1;
+            document.getElementById("ach6").classList.remove("locked")
+        }
+        if (score >= 1e+6) {
+            ach7 = 1;
+            document.getElementById("ach7").classList.remove("locked")
+        }
+        if (score >= 1e+9) {
+            ach8 = 1;
+            document.getElementById("ach8").classList.remove("locked")
+        }
+        if (score >= 1e+12) {
+            ach9 = 1;
+            document.getElementById("ach9").classList.remove("locked")
+        }
+        if (score >= 1e+15) {
+            ach10 = 1;
+            document.getElementById("ach10").classList.remove("locked")
+        }
+        if (score >= 1e+18) {
+            ach11 = 1;
+            document.getElementById("ach11").classList.remove("locked")
+        }
+        if (score >= 1e+21) {
+            ach12 = 1;
+            document.getElementById("ach12").classList.remove("locked")
+        }
+        if (score >= 1e+24) {
+            ach13 = 1;
+            document.getElementById("ach13").classList.remove("locked")
+        }
+        if (score >= 1e+27) {
+            ach14 = 1;
+            document.getElementById("ach14").classList.remove("locked")
+        }
+        if (score >= 1e+30) {
+            ach15 = 1;
+            document.getElementById("ach15").classList.remove("locked")
+        }
+        if (score >= 1e+33) {
+            ach16 = 1;
+            document.getElementById("ach16").classList.remove("locked")
+        }
+        if (score >= 1e+36) {
+            ach17 = 1;
+            document.getElementById("ach17").classList.remove("locked")
+        }
+    updateDisplay();
+}, 1000);
+
+setInterval(function() {
+    if (comboUnlocked && combo > 1) {
+        combo -= 0.05;
+        if (combo < 1) combo = 1; // clamp to 1 minimum
+        manualrollmin = 1 + manualrollminbaseincrease
+        manualrollmax = 6 + manualrollmaxbaseincrease
+        if (RollceptionUnlocked) {
+            Rollceptiongain = totalrolls * 0.001 + 1;
+            if (rollceptionx4Unlocked) {
+                Rollceptiongain = ACTUALtotalrolls * 0.001 + 1;
+            }
+            manualrollmin *= Rollceptiongain * combo * prestigeMultiplier * clickbuffamnt * dicetypesmultiplier * pointeddicecurrentMultiplier;
+            manualrollmax *= Rollceptiongain * combo * prestigeMultiplier * clickbuffamnt * dicetypesmultiplier * pointeddicecurrentMultiplier;
+        } else {
+            manualrollmin *= combo * prestigeMultiplier * clickbuffamnt * dicetypesmultiplier * pointeddicecurrentMultiplier;
+            manualrollmax *= combo * prestigeMultiplier * clickbuffamnt * dicetypesmultiplier * pointeddicecurrentMultiplier;
+        }
+        updateDisplay();          // update immediately so UI shows it dropping
+    }
+    if (clickbuff > 0) {
+        clickbuff -= 1;
+    } else {
+        clickbuffamnt = 1
+    }
+}, 1000);
+
+function hideach100rolls() {
+    document.getElementById("ach100rolls").hidden = true;
+}
+
+function hideach1000rolls() {
+    document.getElementById("ach1000rolls").hidden = true;
+}
+
+function hideachclickit() {
+    document.getElementById("achclickit").hidden = true;
+}
+
+function formatNumber(num) {
+
+    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+
+    if (num < 1000) return num.toFixed(2);
+
+    let tier = Math.floor(Math.log10(num) / 3);
+
+    // If within suffix list
+    if (tier < suffixes.length) {
+        let scale = Math.pow(10, tier * 3);
+        let scaled = num / scale;
+        return scaled.toFixed(1) + suffixes[tier];
+    }
+
+    // If number is insanely big → scientific notation
+    return num.toExponential(2);
+}
+
+function showFloatingNumber(value, isCrit, isSuperCrit) {
+    const number = document.createElement("div");
+    number.classList.add("floating-number");
+    
+    if (isSuperCrit) number.classList.add("supercrit");
+    else if (isCrit) number.classList.add("crit");
+    
+    number.textContent = formatNumber(value);
+
+    // Position near the dice
+    const diceRect = dice.getBoundingClientRect();
+    number.style.left = (diceRect.left + diceRect.width / 2) + "px";
+    number.style.top = diceRect.top + "px";
+
+    document.body.appendChild(number);
+
+    // Animate float up
+    requestAnimationFrame(() => {
+        number.style.transform = "translateY(-60px)";
+        number.style.opacity = 0;
+    });
+
+    // Remove after animation
+    setTimeout(() => number.remove(), 800);
+}
+
+function devmodeget5autorollers() {
+    autoCount += 5
+    autoCost = Math.floor(autoCost * 3.71293);
+    updateDisplay()
+}
+function devmodegetmoretf() {
+    dicegoblinCount += 5
+    dicegoblinCost = Math.floor(dicegoblinCost * 3.71293);
+    updateDisplay()
+}
+function devmodeget5casinotables() {
+    casinotableCount += 5
+    casinotableCost = Math.floor(casinotableCost * 3.71293);
+    updateDisplay()
+}
+function devmodegetmorepp() {
+    prestigePoints += 5
+    updateDisplay()
+}
+
+setInterval(function() {
+
+    if (diamondDiceActive) return;
+
+    if (Math.random() < (0.02)) {
+        spawnDiamondDice();
+    }
+
+}, 10000);
+
+
+function spawnDiamondDice() {
+
+    diamondDiceActive = true;
+
+    let x = Math.random() * (window.innerWidth - 100);
+    let y = Math.random() * (window.innerHeight - 100);
+
+    diamondDice.style.left = x + "px";
+    diamondDice.style.top = y + "px";
+
+    diamondDice.hidden = false;
+
+    // disappear after 8 seconds
+    setTimeout(() => {
+        diamondDice.hidden = true;
+        diamondDiceActive = false;
+    }, 8000);
+
+}
+
+diamondDice.onclick = function() {
+
+    diamondDice.hidden = true;
+    diamondDiceActive = false;
+
+    let reward = Math.floor(Math.random() * 5);
+
+    if (reward === 0) {
+        score += (totaldice / 100) * 15;
+        alert("💎 Lucky! +" + Math.floor((totaldice / 100) * 15) + " Dice");
+    }
+
+    else if (reward === 1) {
+        autoCount += 1;
+        alert("💎 Free Autoroller!");
+        autoCost = Math.floor(autoCost * 1.3);
+    }
+
+    else if (reward === 2) {
+        clickbuff += 60;
+        clickbuffamnt = 2;
+        alert("💎 Click buff! x2 for 60 seconds!");
+        manualrollmin *= 2;
+        manualrollmax *= 2;
+    }
+
+    else if (reward === 3) {
+        clickbuff += 10
+        clickbuffamnt += 77;
+        alert("💎Lottery win! x77 clicks for 10 seconds!")
+        manualrollmin *= 77;
+        manualrollmax *= 77;
+    }
+
+    else {
+        score *= 2;
+        alert("💎 Dice Doubled!");
+    }
+
+    updateDisplay();
+};
+
+function showTooltip(event, title, desc, cost){
+
+const tooltip = document.getElementById("tooltip");
+
+tooltip.style.display = "block";
+
+tooltip.innerHTML =
+"<b>" + title + "</b><br>" +
+desc + "<br>" +
+"<i>" + cost + "</i>";
+
+tooltip.style.left = event.clientX + 15 + "px";
+tooltip.style.top = event.clientY + 15 + "px";
+
+}
+
+function hideTooltip(){
+document.getElementById("tooltip").style.display = "none";
+}
+
+function updateUpgradeAffordability(){
+
+const upgrades = document.querySelectorAll(".upgradeBox");
+
+upgrades.forEach(upgrade => {
+
+let cost = Number(upgrade.dataset.cost);
+
+if(score >= cost){
+upgrade.classList.add("affordable");
+}else{
+upgrade.classList.remove("affordable");
+}
+
+});
+
+}
+
+function prestige() {
+    timesprestiged += 1;
+    prestigePoints += prestigeGain;
+    prestigeGain = 1;
+    score = 0;
+    autoCount = 0;
+    autoCost = 15;
+    rolltime = 800;
+    dicegoblinCount = 0;
+    dicegoblinCost = 200;
+    dicegoblinmultiplier = 1;
+    d4Unlocked = false;
+    d6Unlocked = false;
+    d8Unlocked = false;
+    d10Unlocked = false;
+    d12Unlocked = false;
+    d20Unlocked = false;
+    dicetypesmultiplier = 1;
+    firstdicesetcanget = false;
+    if (!rollceptionceptionUnlocked) {
+        RollceptionUnlocked = false;
+    }
+    autoluckUnlocked = false;
+    bautoluckUnlocked = false;
+    fasterrollersUnlocked = false;
+    featherUnlocked = false;
+    hordeUnlocked = false;
+    autorollmultiplier = 1;
+    critchance = 0.01;
+    supercritchance = 0.001;
+    critmultiplier = 4;
+    supercritmultiplier = 16;
+    totaldice = 0;
+    totalrolls = 0;
+    updateDisplay();
+}
+
+function calcprestigegain() {
+    prestigeGain = (Math.max(0, Math.floor(Math.log10(totaldice)) - 1) * prestigepointmultiplier);
+    if (prestigeGain < 1)
+        prestigeGain = 0
+}
+
+function saveGame(){
+
+document.getElementById("saving").hidden = false;
+let saveData = {
+    lastSaveTime: Date.now(),
+    timesprestiged: timesprestiged,
+    score: score,
+    rolltime: rolltime,
+    totaldice: totaldice,
+    autoCount: autoCount,
+    ACTUALtotalrolls: ACTUALtotalrolls,
+    dicegoblinCount: dicegoblinCount,
+    autoCost: autoCost,
+    dicegoblinCost: dicegoblinCost,
+    totalrolls: totalrolls,
+    ACTUALtotalrolls: ACTUALtotalrolls,
+    RollceptionUnlocked: RollceptionUnlocked,
+    rollceptionceptionUnlocked: rollceptionceptionUnlocked,
+    featherUnlocked: featherUnlocked,
+    autoluckUnlocked: autoluckUnlocked,
+    fasterrollersUnlocked: fasterrollersUnlocked,
+    bautoluckUnlocked: bautoluckUnlocked,
+    comboUnlocked: comboUnlocked,
+    dicetypesmultiplier: dicetypesmultiplier,
+    firstdicesetcanget: firstdicesetcanget,
+    dicegoblinmultiplier: dicegoblinmultiplier,
+    dicegoblinmultiplierpres: dicegoblinmultiplierpres, 
+    d4Unlocked: d4Unlocked,
+    d6Unlocked: d6Unlocked,
+    d8Unlocked: d8Unlocked,
+    d10Unlocked: d10Unlocked,
+    d12Unlocked: d12Unlocked,
+    d20Unlocked: d20Unlocked,
+    achievement100rolls: achievement100rolls,
+    achievement1000rolls: achievement1000rolls,
+    hordeUnlocked: hordeUnlocked,
+    prestigex2Unlocked: prestigex2Unlocked,
+    ach3: ach3,
+    ach4: ach4,
+    ach5: ach5,
+    ach6: ach6,
+    ach7: ach7,
+    ach8: ach8,
+    ach9: ach9,
+    ach10: ach10,
+    ach11: ach11,
+    ach12: ach12,
+    ach13: ach13,
+    ach14: ach14,
+    ach15: ach15,
+    ach16: ach16,
+    ach17: ach17,
+    ach18: ach18,
+    ach19: ach19,
+    ach20: ach20,
+    ach21: ach21,
+    ach22: ach22,
+    ach23: ach23,
+    ach24: ach24,
+    ach25: ach25,
+    ach26: ach26,
+    totalMin: totalMin,
+    rollceptionceptionUnlocked: rollceptionceptionUnlocked,
+    rollceptionceptionceptionUnlocked: rollceptionceptionceptionUnlocked,
+    rollceptionx4Unlocked: rollceptionx4Unlocked,
+    gamblersprophecyUnlocked: gamblersprophecyUnlocked,
+    weighteddiceUnlocked: weighteddiceUnlocked,
+    luckyedgesUnlocked: luckyedgesUnlocked,
+    loadeddiceUnlocked: loadeddiceUnlocked,
+    impossiblegeometryUnlocked: impossiblegeometryUnlocked,
+    luckystrikeUnlocked: luckystrikeUnlocked,
+    evensharperedgesUnlocked: evensharperedgesUnlocked,
+    sharperedgesUnlocked: sharperedgesUnlocked,
+    evenluckierstrikeUnlocked: evenluckierstrikeUnlocked,
+    realitybreakUnlocked: realitybreakUnlocked,
+    casinosluckUnlocked: casinosluckUnlocked,
+    dicegoblintrainingUnlocked: dicegoblintrainingUnlocked,
+    attackUnlocked: attackUnlocked,
+    assemblylineUnlocked: assemblylineUnlocked,
+    tripledprestigeUnlocked: tripledprestigeUnlocked,
+    prestigeMult: prestigeMult,
+    prestigeMultiplier: prestigeMultiplier,
+    prestigepointmultiplier: prestigepointmultiplier,
+    prestigePoints: prestigePoints,
+    prestigex2Unlocked: prestigex2Unlocked,
+    manualrollminbaseincrease: manualrollminbaseincrease,
+    manualrollmaxbaseincrease: manualrollmaxbaseincrease,
+    critchance: critchance,
+    supercritchance: supercritchance,
+    pointeddiceUnlocked: pointeddiceUnlocked,
+    critmultiplier: critmultiplier,
+    supercritmultiplier: supercritmultiplier,
+};
+
+localStorage.setItem("diceClickerSave", JSON.stringify(saveData));
+
+setTimeout(() => {
+    document.getElementById("saving").hidden = true;
+}, 2000);
+}
+
+setInterval(saveGame, 10000);
+
+function loadGame(){
+
+let savedGame = localStorage.getItem("diceClickerSave");
+
+if(savedGame){
+
+let data = JSON.parse(savedGame);
+timeAway = (Date.now() - data.lastSaveTime) / 1000;
+timesprestiged = data.timesprestiged ?? timesprestiged;
+totaldice = data.totaldice ?? totaldice;
+autoCount = data.autoCount ?? autoCount;
+dicegoblinCount = data.dicegoblinCount ?? dicegoblinCount;
+autoCost = data.autoCost ?? autoCost;
+dicegoblinCost = data.dicegoblinCost ?? dicegoblinCost;
+totalrolls = data.totalrolls ?? totalrolls;
+ACTUALtotalrolls = data.ACTUALtotalrolls ?? ACTUALtotalrolls;
+RollceptionUnlocked = data.RollceptionUnlocked ?? RollceptionUnlocked;
+autoluckUnlocked = data.autoluckUnlocked ?? autoluckUnlocked;
+fasterrollersUnlocked = data.fasterrollersUnlocked ?? fasterrollersUnlocked;
+bautoluckUnlocked = data.bautoluckUnlocked ?? bautoluckUnlocked;
+comboUnlocked = data.comboUnlocked ?? comboUnlocked;
+dicetypesmultiplier = data.dicetypesmultiplier ?? dicetypesmultiplier;
+firstdicesetcanget = data.firstdicesetcanget ?? firstdicesetcanget;
+dicegoblinmultiplier = data.dicegoblinmultiplier ?? dicegoblinmultiplier;
+dicegoblinmultiplierpres = data.dicegoblinmultiplierpres ?? dicegoblinmultiplierpres;
+d4Unlocked = data.d4Unlocked ?? d4Unlocked;
+d6Unlocked = data.d6Unlocked ?? d6Unlocked;
+d8Unlocked = data.d8Unlocked ?? d8Unlocked;
+d10Unlocked = data.d10Unlocked ?? d10Unlocked;
+d12Unlocked = data.d12Unlocked ?? d12Unlocked;
+d20Unlocked = data.d20Unlocked ?? d20Unlocked;
+hordeUnlocked = data.hordeUnlocked ?? hordeUnlocked;
+score = data.score ?? score;
+prestigepointmultiplier = data.prestigepointmultiplier ?? prestigepointmultiplier;
+if (score == Infinity) {
+    alert("Liam (and maybe others), you had infinity points. You get a prestige point multiplier of x2. (not including the notification you will get right after this)")
+    prestigepointmultiplier *=2
+}
+rolltime = data.rolltime ?? rolltime;
+totalMin = data.totalMin ?? totalMin;
+score += timeAway / 40 * totalMin;
+prestigeMult = data.prestigeMult ?? prestigeMult;
+if (prestigeMult > 1) {
+    alert("You had prestige multiplier before the Prestige update! (valpha1.1.0) I'll give you 10 free prestige points.")
+    prestigePoints += 10
+    prestigeMult = 1
+}
+achievement100rolls = data.achievement100rolls ?? achievement100rolls;
+achievement1000rolls = data.achievement1000rolls ?? achievement1000rolls;
+ach3 = data.ach3 ?? ach3;
+ach4 = data.ach4 ?? ach4;
+ach5 = data.ach5 ?? ach5;
+ach6 = data.ach6 ?? ach6;
+ach7 = data.ach7 ?? ach7;
+ach8 = data.ach8 ?? ach8;
+ach9 = data.ach9 ?? ach9;
+ach10 = data.ach10 ?? ach10;
+ach11 = data.ach11 ?? ach11;
+ach12 = data.ach12 ?? ach12;
+ach13 = data.ach13 ?? ach13;
+ach14 = data.ach14 ?? ach14;
+ach15 = data.ach15 ?? ach15;
+ach16 = data.ach16 ?? ach16;
+ach17 = data.ach17 ?? ach17;
+ach18 = data.ach18 ?? ach18;
+ach19 = data.ach19 ?? ach19;
+ach20 = data.ach20 ?? ach20;
+ach21 = data.ach21 ?? ach21;
+ach22 = data.ach22 ?? ach22;
+ach23 = data.ach23 ?? ach23;
+ach24 = data.ach24 ?? ach24;
+ach25 = data.ach25 ?? ach25;
+ach26 = data.ach26 ?? ach26;
+prestigeMultiplier = data.prestigeMultiplier ?? prestigeMultiplier;
+prestigePoints = data.prestigePoints ?? prestigePoints;
+prestigex2Unlocked = data.prestigex2Unlocked ?? prestigex2Unlocked;
+rollceptionceptionUnlocked = data.rollceptionceptionUnlocked ?? rollceptionceptionUnlocked;
+rollceptionceptionceptionUnlocked = data.rollceptionceptionceptionUnlocked ?? rollceptionceptionceptionUnlocked;
+rollceptionx4Unlocked = data.rollceptionx4Unlocked ?? rollceptionx4Unlocked;
+gamblersprophecyUnlocked = data.gamblersprophecyUnlocked ?? gamblersprophecyUnlocked;
+weighteddiceUnlocked = data.weighteddiceUnlocked ?? weighteddiceUnlocked;
+luckyedgesUnlocked = data.luckyedgesUnlocked ?? luckyedgesUnlocked;
+loadeddiceUnlocked = data.loadeddiceUnlocked ?? loadeddiceUnlocked;
+impossiblegeometryUnlocked = data.impossiblegeometryUnlocked ?? impossiblegeometryUnlocked;
+luckystrikeUnlocked = data.luckystrikeUnlocked ?? luckystrikeUnlocked;
+evensharperedgesUnlocked = data.evensharperedgesUnlocked ?? evensharperedgesUnlocked;
+sharperedgesUnlocked = data.sharperedgesUnlocked ?? sharperedgesUnlocked;
+evenluckierstrikeUnlocked = data.evenluckierstrikeUnlocked ?? evenluckierstrikeUnlocked;
+realitybreakUnlocked = data.realitybreakUnlocked ?? realitybreakUnlocked;
+casinosluckUnlocked = data.casinosluckUnlocked ?? casinosluckUnlocked;
+dicegoblintrainingUnlocked = data.dicegoblintrainingUnlocked ?? dicegoblintrainingUnlocked;
+attackUnlocked = data.attackUnlocked ?? attackUnlocked;
+assemblylineUnlocked = data.assemblylineUnlocked ?? assemblylineUnlocked;
+tripledprestigeUnlocked = data.tripledprestigeUnlocked ?? tripledprestigeUnlocked
+featherUnlocked = data.featherUnlocked ?? featherUnlocked;
+dicegoblinCount = data.dicegoblinCount ?? dicegoblinCount;
+dicegoblinCost = data.dicegoblinCost ?? dicegoblinCost;
+ACTUALtotalrolls = data.ACTUALtotalrolls ?? ACTUALtotalrolls;
+manualrollminbaseincrease = data.manualrollminbaseincrease ?? manualrollminbaseincrease;
+manualrollmaxbaseincrease = data.manualrollmaxbaseincrease ?? manualrollmaxbaseincrease;
+critchance = data.critchance ?? critchance
+critmultiplier = data.critmultiplier ?? critmultiplier
+supercritchance = data.supercritchance ?? supercritchance
+supercritmultiplier = data.supercritmultiplier ?? supercritmultiplier
+pointeddiceUnlocked = data.pointeddiceUnlocked ?? pointeddiceUnlocked
+}
+
+updateDisplay();
+
+}
+
+function updateDisplay() {
+    document.getElementById("score").textContent = formatNumber(score);
+    document.getElementById("autoCount").textContent = autoCount;
+    document.getElementById("dicegoblinCount").textContent = dicegoblinCount;
+    document.getElementById("casinotableCount").textContent = casinotableCount;
+    document.getElementById("autoCost").textContent = formatNumber(autoCost);
+    document.getElementById("dicegoblinCost").textContent = formatNumber(dicegoblinCost);
+    document.getElementById("casinotableCost").textContent = formatNumber(casinotableCost);
+    if (rollceptionceptionceptionUnlocked) {
+        document.getElementById("totalrolls").textContent = formatNumber(ACTUALtotalrolls);
+    } else {
+        document.getElementById("totalrolls").textContent = formatNumber(totalrolls);
+    }
+    calcprestigegain();
+    document.getElementById("prestige").textContent = formatNumber(prestigeGain);
+    document.getElementById("prestigePoints").textContent = formatNumber(prestigePoints);
+    challenge0goal = 1e5 * (10 ** challenge0completions);
+    challenge1goal = 1e5 * (15 ** challenge1completions);
+    challenge2goal = 1e5 * (12.5 ** challenge2completions);
+    challenge3goal = 2.5e4 * (100 ** challenge3completions);
+    challenge4goal = 1e6 * (50 ** challenge4completions);
+    challenge5goal = 1e4 * (5 ** challenge5completions);
+    challenge6goal = 2.5e5 * (25 ** challenge6completions);
+    challenge7goal = 1e6 * (100 ** challenge7completions);
+    challenge8goal = 1e7 * (100 ** challenge8completions);
+    challenge0desc = ("Crit chance x50 but crits give 0.01x less than normal rolls." + "<br>" + "Goal: " + formatNumber(challenge0goal) + "<br>" + "Reward: Crits give +1% more");
+    challenge1desc = ("Roll time is 5x longer and all buyables give 50% less." + "<br>" + "Goal: " + formatNumber(challenge1goal) + "<br>" + "Reward: -0.01s roll time (softcap at 0.35s)");
+    challenge2desc = ("Dice is multiplied by x0.5." + "<br>" + "Goal: " + formatNumber(challenge2goal) + "<br>" + "Reward: +1% dice gain");
+    challenge3desc = ("You cannot click, start with 1 auto roller." + "<br>" + "Goal: " + formatNumber(challenge3goal) + "<br>" + "Reward: Start with +1 autoroller on prestige (gain one more every 10 completions)");
+    challenge4desc = ("You can only gain dice from clicking." + "<br>" + "Goal: " + formatNumber(challenge4goal) + "<br>" + "Reward: Clicks give 1% more dice");
+    challenge5desc = ("No multipliers." + "<br>" + "Goal: " + formatNumber(challenge5goal) + "<br>" + "Reward: +1% dice gain");
+    challenge6desc = ("Prestige upgrades disabled." + "<br>" + "Goal: " + formatNumber(challenge6goal) + "<br>" + "+1% prestige point gain");
+    challenge7desc = ("Common exponent /3" + "<br>" + "Goal: " + formatNumber(challenge7goal) + "<br>" + "Reward: +0.001 common exponent (soft cap at 0.5)");
+    challenge8desc = ("Only rolls at maximum value give dice." + "<br>" + "Goal: " + formatNumber(challenge8goal) + "<br>" + "Reward: Base max roll +0.1 (soft cap at +100)");
+    
+    const challengeData = [
+        challenge0desc,
+        challenge1desc,
+        challenge2desc,
+        challenge3desc,
+        challenge4desc,
+        challenge5desc,
+        challenge6desc,
+        challenge7desc,
+        challenge8desc
+    ];
+
+    if (challengesUnlocked) {
+        document.getElementById("challengeUI").style.display = "block";
+    } else {
+        document.getElementById("challengeUI").style.display = "none";
+    }
+
+    if (score >= 500) {
+        firstdicesetcanget = true;
+    }
+    if (prestigeMult > 1) {
+    document.getElementById("prestigemultiplier").textContent = ("x" + formatNumber(prestigeMultiplier));
+    }
+    document.title = formatNumber(score) + " Dice in Dice clicker";
+
+    if (pointeddiceUnlocked) {
+        pointeddicecurrentMultiplier = (prestigePoints * 0.01) + 1
+        if (prestigePoints >= 75) {
+        pointeddicecurrentMultiplier = Math.log10(prestigePoints) * 0.93;
+        console.log(pointeddicecurrentMultiplier)
+        }
+    } else {
+        pointeddicecurrentMultiplier = 1
+    }
+
+    let totalMin = ((autoMin * autoCount * autorollmultiplier) + (dicegoblinCount * dicegoblinMin * dicegoblinmultiplier * dicegoblinmultiplierpres) + (casinotableCount * casinotableMin * casinotablemultiplier * casinotablemultiplierpres)) * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+    let totalMax = ((autoMax * autoCount * autorollmultiplier) + (dicegoblinCount * dicegoblinMax * dicegoblinmultiplier * dicegoblinmultiplierpres) + (casinotableCount * casinotableMax * casinotablemultiplier * casinotablemultiplierpres)) * dicetypesmultiplier * prestigeMultiplier * pointeddicecurrentMultiplier;
+    document.getElementById("autoRate").textContent = formatNumber(totalMin) + " - " + formatNumber(totalMax);
+    document.getElementById("min-maxmanual").textContent = formatNumber(manualrollmin) + " - " + formatNumber(manualrollmax) + " per roll";
+    if (achievement100rolls && !RollceptionUnlocked) {
+        document.getElementById("rollception").hidden = false;
+    } else {
+        document.getElementById("rollception").hidden = true;
+    }
+    if (autoCount >= 1 && !autoluckUnlocked) {
+        document.getElementById("autoluck").hidden = false;
+    } else {
+        document.getElementById("autoluck").hidden = true;
+    }
+    if (dicegoblinCount >= 1 && !hordeUnlocked) {
+        document.getElementById("horde").hidden = false;
+    } else {
+        document.getElementById("horde").hidden = true;
+    }
+    if (autoCount >= 5 && !fasterrollersUnlocked) {
+        document.getElementById("fasterrollers").hidden = false;
+    } else {
+        document.getElementById("fasterrollers").hidden = true;
+    }
+    if (autoCount >= 10 && !bautoluckUnlocked) {
+        document.getElementById("bautoluck").hidden = false;
+    } else {
+        document.getElementById("bautoluck").hidden = true;
+    }
+    if (firstdicesetcanget && !d4Unlocked) {
+        document.getElementById("d4").hidden = false;
+    } else {
+        document.getElementById("d4").hidden = true;
+    }
+    if (firstdicesetcanget && !d6Unlocked) {
+        document.getElementById("d6").hidden = false;
+    } else {
+        document.getElementById("d6").hidden = true;
+    }
+    if (firstdicesetcanget && !d8Unlocked) {
+        document.getElementById("d8").hidden = false;
+    } else {
+        document.getElementById("d8").hidden = true;
+    }
+    if (firstdicesetcanget && !d10Unlocked) {
+        document.getElementById("d10").hidden = false;
+    } else {
+        document.getElementById("d10").hidden = true;
+    }
+    if (firstdicesetcanget && !d12Unlocked) {
+        document.getElementById("d12").hidden = false;
+    } else {
+        document.getElementById("d12").hidden = true;
+    }
+    if (firstdicesetcanget && !d20Unlocked) {
+        document.getElementById("d20").hidden = false;
+    } else {
+        document.getElementById("d20").hidden = true;
+    }
+    if (achievement1000rolls && !comboUnlocked) {
+        document.getElementById("combo").hidden = false;
+    } else {
+        document.getElementById("combo").hidden = true;
+    }
+    if (devmode) {
+        document.getElementById("devmodeget5autorollers").hidden = false
+        document.getElementById("devmodemoretf").hidden = false
+        document.getElementById("devmodeget5casinotables").hidden = false
+        document.getElementById("devmodegetmorepp").hidden = false
+    }
+    if (totaldice > 1000) {
+        document.getElementById("prestigebutton").hidden = false
+     } else {
+            document.getElementById("prestigebutton").hidden = true
+        }
+    if (prestigex2Unlocked) {
+        document.getElementById("pb").classList.add("bought")
+    }
+    if (rollceptionceptionUnlocked) {
+        document.getElementById("rcc").classList.add("bought")
+    }
+    if (rollceptionceptionceptionUnlocked) {
+        document.getElementById("rccc").classList.add("bought")
+    }
+    if (rollceptionx4Unlocked) {
+        document.getElementById("rcx4").classList.add("bought")
+    }
+    if (gamblersprophecyUnlocked) {
+        document.getElementById("gp").classList.add("bought")
+    }
+    if (weighteddiceUnlocked) {
+        document.getElementById("wd").classList.add("bought")
+    }
+    if (luckyedgesUnlocked) {
+        document.getElementById("le").classList.add("bought")
+    }
+    if (loadeddiceUnlocked) {
+        document.getElementById("ld").classList.add("bought")
+    }
+    if (impossiblegeometryUnlocked) {
+        document.getElementById("ig").classList.add("bought")
+    }
+    if (luckystrikeUnlocked) {
+        document.getElementById("ls").classList.add("bought")
+    }
+    if (evensharperedgesUnlocked) {
+        document.getElementById("ese").classList.add("bought")
+    }
+    if (sharperedgesUnlocked) {
+        document.getElementById("se").classList.add("bought")
+    }
+    if (evenluckierstrikeUnlocked) {
+        document.getElementById("els").classList.add("bought")
+    }
+    if (realitybreakUnlocked) {
+        document.getElementById("rb").classList.add("bought")
+    }
+    if (casinosluckUnlocked) {
+        document.getElementById("cl").classList.add("bought")
+    }
+    if (dicegoblintrainingUnlocked) {
+        document.getElementById("dgt").classList.add("bought")
+    }
+    if (attackUnlocked) {
+        document.getElementById("atk").classList.add("bought")
+    }
+    if (assemblylineUnlocked) {
+        document.getElementById("al").classList.add("bought")
+    }
+    if (tripledprestigeUnlocked) {
+        document.getElementById("dp").classList.add("bought")
+    }
+    if (pointeddiceUnlocked) {
+        document.getElementById("pd").classList.add("bought")
+    }
+        if (ach4 == 1) {
+            document.getElementById("ach4").classList.remove("locked")
+        } else {
+            document.getElementById("ach4").classList.add("locked")
+        }
+        if (ach5 == 1) {
+            document.getElementById("ach5").classList.remove("locked")
+        } else {
+            document.getElementById("ach5").classList.add("locked")
+        }
+        if (ach6 == 1) {
+            document.getElementById("ach6").classList.remove("locked")
+        } else {
+            document.getElementById("ach6").classList.add("locked")
+        }
+        if (ach7 == 1) {
+            document.getElementById("ach7").classList.remove("locked")
+        } else {
+            document.getElementById("ach7").classList.add("locked")
+        }
+        if (ach8 == 1) {
+            document.getElementById("ach8").classList.remove("locked")
+        } else {
+            document.getElementById("ach8").classList.add("locked")
+        }
+        if (ach9 == 1) {
+            document.getElementById("ach9").classList.remove("locked")
+        } else {
+            document.getElementById("ach9").classList.add("locked")
+        }
+        if (ach10 == 1) {
+            document.getElementById("ach10").classList.remove("locked")
+        } else {
+            document.getElementById("ach10").classList.add("locked")
+        }
+        if (ach11 == 1) {
+            document.getElementById("ach11").classList.remove("locked")
+        } else {
+            document.getElementById("ach11").classList.add("locked")
+        }
+        if (ach12 == 1) {
+            document.getElementById("ach12").classList.remove("locked")
+        } else {
+            document.getElementById("ach12").classList.add("locked")
+        }
+        if (ach13 == 1) {
+            document.getElementById("ach13").classList.remove("locked")
+        } else {
+            document.getElementById("ach13").classList.add("locked")
+        }
+        if (ach14 == 1) {
+            document.getElementById("ach14").classList.remove("locked")
+        } else {
+            document.getElementById("ach14").classList.add("locked")
+        }
+        if (ach15 == 1) {
+            document.getElementById("ach15").classList.remove("locked")
+        } else {
+            document.getElementById("ach15").classList.add("locked")
+        }
+        if (ach16 == 1) {
+            document.getElementById("ach16").classList.remove("locked")
+        } else {
+            document.getElementById("ach16").classList.add("locked")
+        }
+        if (ach17 == 1) {
+            document.getElementById("ach17").classList.remove("locked")
+        } else {
+            document.getElementById("ach17").classList.add("locked")
+        }
+        if (ach18 == 1) {
+            document.getElementById("ach18").classList.remove("locked")
+        } else {
+            document.getElementById("ach18").classList.add("locked")
+        }
+        if (ach19 == 1) {
+            document.getElementById("ach19").classList.remove("locked")
+        } else {
+            document.getElementById("ach19").classList.add("locked")
+        }
+        if (ach20 == 1) {
+            document.getElementById("ach20").classList.remove("locked")
+        } else {
+            document.getElementById("ach20").classList.add("locked")
+        }
+        if (ach21 == 1) {
+            document.getElementById("ach21").classList.remove("locked")
+        } else {
+            document.getElementById("ach21").classList.add("locked")
+        }
+        if (ach22 == 1) {
+            document.getElementById("ach22").classList.remove("locked")
+        } else {
+            document.getElementById("ach22").classList.add("locked")
+        }
+        if (ach23 == 1) {
+            document.getElementById("ach23").classList.remove("locked")
+        } else {
+            document.getElementById("ach23").classList.add("locked")
+        }
+        if (ach24 == 1) {
+            document.getElementById("ach24").classList.remove("locked")
+        } else {
+            document.getElementById("ach24").classList.add("locked")
+        }
+        if (ach25 == 1) {
+            document.getElementById("ach25").classList.remove("locked")
+        } else {
+            document.getElementById("ach25").classList.add("locked")
+        }
+        if (ach26 == 1) {
+            document.getElementById("ach26").classList.remove("locked")
+        } else {
+            document.getElementById("ach26").classList.add("locked")
+        }
+        if (timesprestiged >= 1) {
+            document.getElementById("skillTreeWrapper").hidden = false
+        }
+    updateUpgradeAffordability();
+    
+
+}
+
+loadGame();
+// All autodice generator names: Auto roller, Dice goblin, Casino table, Dice factory, Dice mine, Dice laboratory, Dice portal, Dice dimension, Dice planet, Dice star, Dice galaxy, Dice multiverse, Dice gods, Dice singularity, The final dice.
+</script>
+
+</body>
+</html>
